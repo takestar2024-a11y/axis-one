@@ -1,84 +1,83 @@
-const STEPS = [
-  {
-    label: "You write",
-    body: "Two paragraphs: what you are trying to win at, and what is in the way. No brief, no deck.",
-  },
-  {
-    label: "We answer",
-    body: "Within two working days — a first read of your axis, or a straight no with the reason.",
-  },
-  {
-    label: "We sit down",
-    body: "Ninety minutes with the people who decide. Paid work starts after that session, never before it.",
-  },
-];
+"use client";
+
+import { openAxisCore } from "@/components/AxisCore";
+import { useLang } from "@/lib/i18n";
+
+/** Scene 07 — the ask, the marquee, the footer. */
+
+// Four pairs, so the -50% loop lands on an identical frame.
+const MARQUEE = ["One axis.", "Infinite possibilities."];
 
 export default function FinalCTA() {
+  const { t } = useLang();
+
   return (
-    <section
-      id="contact"
-      className="relative isolate overflow-hidden py-28 md:py-36"
-    >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-52 left-1/2 -z-10 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full opacity-20 blur-[130px]"
-        style={{
-          background:
-            "radial-gradient(circle, var(--color-accent) 0%, transparent 68%)",
-        }}
-      />
+    <>
+      <section className="cta" id="cta">
+        <h2 className="display display--mega">
+          <span className="mask">
+            <span>{t("cta.line1")}</span>
+          </span>
+          <span className="mask">
+            <span className="gold">{t("cta.line2")}</span>
+          </span>
+        </h2>
 
-      <div className="shell">
-        <div className="reveal grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-24">
-          <div>
-            <p className="eyebrow">07 / Start</p>
-            <h2 className="mt-7 text-[clamp(2.5rem,6vw,4.5rem)] leading-[0.98] font-medium tracking-[-0.035em] text-balance">
-              Find your axis.
-              <br />
-              <span className="text-muted">Then build on it.</span>
-            </h2>
-            <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted">
-              We take on a small number of engagements at a time, because we
-              build rather than advise. If the axis is already clear to you, say
-              so — we will tell you honestly whether you need us.
-            </p>
+        <p className="lead">{t("cta.lead")}</p>
 
-            <div className="mt-11 flex flex-wrap items-center gap-4">
-              <a
-                href="mailto:hello@axis-one.example.com"
-                className="rounded-full bg-accent px-6 py-3 text-sm font-medium text-base transition-opacity hover:opacity-90"
-              >
-                hello@axis-one.example.com
-              </a>
-              <a
-                href="#axis-core"
-                className="rounded-full border border-line px-6 py-3 text-sm transition-colors hover:border-ink"
-              >
-                Run Axis Core first
-              </a>
-            </div>
-          </div>
+        <button type="button" className="enter" data-cursor="GO" onClick={openAxisCore}>
+          <span className="enter-t">{t("cta.enter")}</span>
+          <span className="arw" />
+        </button>
 
-          <ol className="border-t border-line">
-            {STEPS.map((step, index) => (
-              <li
-                key={step.label}
-                className="grid gap-3 border-b border-line py-6 md:grid-cols-[3rem_minmax(0,1fr)] md:gap-6"
-              >
-                <span className="font-mono text-xs text-accent">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <div>
-                  <h3 className="font-mono text-xs tracking-[0.2em] uppercase">
-                    {step.label}
-                  </h3>
-                  <p className="mt-2 leading-relaxed text-muted">{step.body}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+        <div className="cta-note">{t("cta.note")}</div>
+      </section>
+
+      <div className="marquee" aria-hidden="true">
+        <div className="marquee-in">
+          {Array.from({ length: 4 }).flatMap((_, pair) =>
+            MARQUEE.map((word, i) => <span key={`${pair}-${i}`}>{word}</span>),
+          )}
         </div>
       </div>
-    </section>
+
+      <footer className="foot">
+        <div className="foot-grid">
+          <div className="foot-col">
+            <h4>
+              AXIS<i>·</i>ONE
+            </h4>
+            <p style={{ maxWidth: "30ch" }}>{t("foot.about")}</p>
+          </div>
+
+          <div className="foot-col">
+            <div className="foot-label">{t("foot.contact")}</div>
+            <a href="mailto:hello@axisone.jp">hello@axisone.jp</a>
+            <a
+              href="#cta"
+              onClick={(event) => {
+                event.preventDefault();
+                openAxisCore();
+              }}
+            >
+              {t("foot.startProject")}
+            </a>
+            <a href="#work">{t("foot.workIndex")}</a>
+          </div>
+
+          <div className="foot-col">
+            <div className="foot-label">{t("foot.elsewhere")}</div>
+            <a href="#">Instagram</a>
+            <a href="#">X</a>
+            <a href="#">LinkedIn</a>
+          </div>
+        </div>
+
+        <div className="foot-bottom">
+          <span>© {new Date().getFullYear()} Axis One</span>
+          <span>{t("foot.place")}</span>
+        </div>
+      </footer>
+    </>
   );
 }

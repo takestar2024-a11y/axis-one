@@ -1,276 +1,370 @@
 "use client";
 
-import { useRef, useState } from "react";
 import {
-  PLANES,
-  SCALE_LABELS,
-  SIGNALS,
-  type AxisReading,
-  bandLabel,
-  signalsFor,
-} from "@/lib/axis-core";
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+  type ReactNode,
+} from "react";
+import { useLang } from "@/lib/i18n";
+import { UI, localAnswer, type ChatMessage } from "@/lib/axis-core";
 
-type Draft = Record<string, number | undefined>;
+/**
+ * AXIS CORE — the assistant.
+ *
+ * Answers come from `/api/axis-core` when the site is connected to a model,
+ * and from the local knowledge core otherwise. The visitor cannot tell the
+ * difference except for the status line, and the panel never fails to reply.
+ */
 
-const BAND_TONE: Record<AxisReading["band"], string> = {
-  aligned: "text-accent",
-  holding: "text-ink",
-  drifting: "text-ink",
-  "off-axis": "text-muted",
-};
+const OPEN_EVENT = "axis-core:open";
 
-export default function AxisCore() {
-  const [draft, setDraft] = useState<Draft>({});
-  const [reading, setReading] = useState<AxisReading | null>(null);
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const resultRef = useRef<HTMLDivElement>(null);
+/** Open the panel from anywhere on the page. */
+export function openAxisCore() {
+  window.dispatchEvent(new CustomEvent(OPEN_EVENT));
+}
 
-  const answered = SIGNALS.filter(
-    (signal) => draft[signal.id] !== undefined,
-  ).length;
-  const complete = answered === SIGNALS.length;
+/* ---------- minimal Web Speech typings (not in lib.dom) ---------- */
+interface SpeechResultEvent {
+  results: ArrayLike<ArrayLike<{ transcript: string }>>;
+}
+interface Recognition {
+  lang: string;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onerror: (() => void) | null;
+  onresult: ((event: SpeechResultEvent) => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+type RecognitionCtor = new () => Recognition;
 
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!complete || pending) return;
+function recognitionCtor(): RecognitionCtor | null {
+  const w = window as unknown as {
+    SpeechRecognition?: RecognitionCtor;
+    webkitSpeechRecognition?: RecognitionCtor;
+  };
+  return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
+}
 
-    setPending(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/axis-core", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ responses: draft }),
-      });
-      const payload: { reading?: AxisReading; error?: string } =
-        await response.json();
+const subscribeNever = () => () => {};
+const hasRecognition = () => recognitionCtor() !== null;
+const voiceUnsupported = () => false;
 
-      if (!response.ok || !payload.reading) {
-        throw new Error(payload.error ?? "The reading could not be scored.");
-      }
-
-      setReading(payload.reading);
-      // Move focus to the result so keyboard and screen-reader users land on it.
-      requestAnimationFrame(() => resultRef.current?.focus());
-    } catch (cause) {
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : "The reading could not be scored.",
-      );
-    } finally {
-      setPending(false);
-    }
-  }
-
-  function reset() {
-    setDraft({});
-    setReading(null);
-    setError(null);
-  }
-
-  return (
-    <section id="axis-core" className="border-b border-line py-24 md:py-32">
-      <div className="shell">
-        <div className="reveal grid gap-10 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-16">
-          <p className="eyebrow lg:pt-3">03 / Axis Core</p>
-          <div className="max-w-3xl">
-            <h2 className="text-[clamp(2rem,4.2vw,3.25rem)] leading-[1.05] font-medium tracking-[-0.03em] text-balance">
-              Read your own axis in two minutes.
-            </h2>
-            <p className="mt-7 text-lg leading-relaxed text-muted">
-              Nine statements, three planes, one index. Answer as the company
-              is today — not as the deck describes it. Scoring runs server-side
-              on the same engine we use in the first week of an engagement.
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-16 border border-line md:mt-20">
-          {reading ? (
-            <Result
-              ref={resultRef}
-              reading={reading}
-              onReset={reset}
-            />
-          ) : (
-            <form onSubmit={onSubmit}>
-              {PLANES.map((plane) => (
-                <div key={plane.id} className="border-b border-line">
-                  <div className="flex items-baseline justify-between gap-6 bg-raised px-6 py-4 md:px-10">
-                    <h3 className="font-mono text-xs tracking-[0.2em] uppercase">
-                      {String(plane.position).padStart(2, "0")} — {plane.name}
-                    </h3>
-                    <p className="hidden text-sm text-muted sm:block">
-                      {plane.claim}
-                    </p>
-                  </div>
-
-                  {signalsFor(plane.id).map((signal) => (
-                    <fieldset
-                      key={signal.id}
-                      className="grid gap-5 border-t border-line px-6 py-7 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-10 md:px-10"
-                    >
-                      <legend className="sr-only">{signal.statement}</legend>
-                      <p aria-hidden="true" className="leading-relaxed">
-                        {signal.statement}
-                      </p>
-
-                      <div className="flex items-center gap-1.5">
-                        {SCALE_LABELS.map((label, value) => (
-                          <label
-                            key={value}
-                            className="cursor-pointer"
-                            title={label}
-                          >
-                            <input
-                              type="radio"
-                              name={signal.id}
-                              value={value}
-                              checked={draft[signal.id] === value}
-                              onChange={() =>
-                                setDraft((current) => ({
-                                  ...current,
-                                  [signal.id]: value,
-                                }))
-                              }
-                              className="peer sr-only"
-                            />
-                            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-line font-mono text-xs text-muted transition-colors peer-checked:border-accent peer-checked:bg-accent peer-checked:text-base peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent hover:border-ink hover:text-ink">
-                              {value}
-                            </span>
-                            <span className="sr-only">{label}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </fieldset>
-                  ))}
-                </div>
-              ))}
-
-              <div className="flex flex-col gap-5 px-6 py-7 md:flex-row md:items-center md:justify-between md:px-10">
-                <p className="font-mono text-xs text-muted">
-                  <span className="text-ink">{answered}</span> / {SIGNALS.length}{" "}
-                  answered
-                  <span className="ml-3 hidden sm:inline">
-                    0 = not true · {SCALE_LABELS.length - 1} = true today
-                  </span>
-                </p>
-
-                <div className="flex items-center gap-4">
-                  {error ? (
-                    <p role="alert" className="text-sm text-accent">
-                      {error}
-                    </p>
-                  ) : null}
-                  <button
-                    type="submit"
-                    disabled={!complete || pending}
-                    className="rounded-full bg-accent px-6 py-3 text-sm font-medium text-base transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:bg-line disabled:text-muted"
-                  >
-                    {pending ? "Reading…" : "Run the reading"}
-                  </button>
-                </div>
-              </div>
-            </form>
-          )}
-        </div>
-      </div>
-    </section>
+/** `**bold**` is the only markup the core emits. */
+function renderMessage(text: string): ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) =>
+    part.startsWith("**") && part.endsWith("**") ? (
+      <b key={index}>{part.slice(2, -2)}</b>
+    ) : (
+      <span key={index}>{part}</span>
+    ),
   );
 }
 
-function Result({
-  ref,
-  reading,
-  onReset,
-}: {
-  ref: React.Ref<HTMLDivElement>;
-  reading: AxisReading;
-  onReset: () => void;
-}) {
+export default function AxisCore() {
+  const { lang } = useLang();
+  const copy = UI[lang];
+
+  const [open, setOpen] = useState(false);
+  const [turns, setTurns] = useState<ChatMessage[]>([]);
+  const [pending, setPending] = useState(false);
+  const [online, setOnline] = useState<boolean | null>(null);
+  const [recording, setRecording] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [draft, setDraft] = useState("");
+
+  const logRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const recognitionRef = useRef<Recognition | null>(null);
+  const spokeLast = useRef(false);
+  const onlineRef = useRef<boolean | null>(null);
+  const busy = useRef(false);
+
+  const touch =
+    typeof window !== "undefined" &&
+    window.matchMedia("(hover: none), (pointer: coarse)").matches;
+
+  /* ---------- speaking ---------- */
+  const speak = useCallback(
+    (text: string) => {
+      if (!window.speechSynthesis) return;
+      const plain = text.replace(/\*\*/g, "").replace(/\n+/g, "。 ").slice(0, 300);
+      const utterance = new SpeechSynthesisUtterance(plain);
+      utterance.lang = lang === "ja" ? "ja-JP" : "en-US";
+      utterance.rate = lang === "ja" ? 1.0 : 1.02;
+      utterance.pitch = 0.9;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    },
+    [lang],
+  );
+
+  /* ---------- asking ---------- */
+  const ask = useCallback(
+    async (text: string, viaVoice = false) => {
+      const question = text.trim();
+      if (!question || busy.current) return;
+
+      busy.current = true;
+      spokeLast.current = viaVoice;
+      setPending(true);
+      setDraft("");
+      if (inputRef.current) inputRef.current.style.height = "auto";
+
+      const history = [...turns, { role: "user", content: question } as ChatMessage];
+      setTurns(history);
+
+      const settle = (answer: string, live: boolean) => {
+        setTurns([...history, { role: "assistant", content: answer }]);
+        setOnline(live);
+        onlineRef.current = live;
+        if (spokeLast.current) speak(answer);
+        setPending(false);
+        busy.current = false;
+      };
+
+      // Once the endpoint has told us there is no model, stop asking it.
+      if (onlineRef.current === false) {
+        window.setTimeout(() => settle(localAnswer(question, lang), false), 420);
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/axis-core", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ messages: history, lang }),
+        });
+        const payload: { text?: string; error?: string; fallback?: boolean } =
+          await response.json();
+
+        if (!response.ok || !payload.text) {
+          // A missing model falls back silently; a real failure says so.
+          if (payload.fallback || response.status === 503) {
+            settle(localAnswer(question, lang), false);
+          } else {
+            settle(payload.error ?? copy.error, false);
+          }
+          return;
+        }
+        settle(payload.text, true);
+      } catch {
+        settle(localAnswer(question, lang), false);
+      }
+    },
+    [copy.error, lang, speak, turns],
+  );
+
+  /* ---------- panel open / close ---------- */
+  const shut = useCallback(() => {
+    setOpen(false);
+    window.__lenis?.start();
+    window.speechSynthesis?.cancel();
+    recognitionRef.current?.stop();
+  }, []);
+
+  useEffect(() => {
+    const onOpen = () => setOpen(true);
+    window.addEventListener(OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_EVENT, onOpen);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    if (touch) window.__lenis?.stop();
+    const focus = window.setTimeout(() => {
+      if (!touch) inputRef.current?.focus();
+    }, 420);
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") shut();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.clearTimeout(focus);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open, shut, touch]);
+
+  /* the core wakes up once the hero has settled */
+  useEffect(() => {
+    const id = window.setTimeout(() => setReady(true), 5200);
+    return () => window.clearTimeout(id);
+  }, []);
+
+  /* keep the log pinned to the newest message */
+  useEffect(() => {
+    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
+  }, [turns, pending, open]);
+
+  /* ---------- voice input ---------- */
+  const listen = useCallback(() => {
+    if (recording) {
+      recognitionRef.current?.stop();
+      return;
+    }
+    const Ctor = recognitionCtor();
+    if (!Ctor) return;
+
+    const recognition = new Ctor();
+    recognitionRef.current = recognition;
+    recognition.lang = lang === "ja" ? "ja-JP" : "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.onstart = () => setRecording(true);
+    recognition.onend = () => setRecording(false);
+    recognition.onerror = () => setRecording(false);
+    recognition.onresult = (event) => {
+      const transcript = event.results[0]?.[0]?.transcript;
+      if (transcript) void ask(transcript, true);
+    };
+    try {
+      recognition.start();
+    } catch {
+      // Already running — the onend handler will reset the button.
+    }
+  }, [ask, lang, recording]);
+
+  // Capability detection is external state that never changes after load, and
+  // it must not run during SSR — hence the server snapshot of `false`.
+  const voiceSupported = useSyncExternalStore(
+    subscribeNever,
+    hasRecognition,
+    voiceUnsupported,
+  );
+
+  function onSubmit(event: FormEvent) {
+    event.preventDefault();
+    void ask(draft);
+  }
+
+  const status = online ? copy.live : copy.local;
+
   return (
-    <div ref={ref} tabIndex={-1} className="focus:outline-none">
-      <div className="grid gap-10 px-6 py-10 md:grid-cols-[14rem_minmax(0,1fr)] md:gap-14 md:px-10 md:py-12">
-        <div>
-          <p className="eyebrow">Alignment index</p>
-          <p
-            className={`mt-3 font-mono text-7xl leading-none tracking-[-0.04em] ${BAND_TONE[reading.band]}`}
-          >
-            {reading.index}
-          </p>
-          <p className="mt-3 font-mono text-xs tracking-[0.2em] text-muted uppercase">
-            {bandLabel(reading.band)}
-          </p>
-        </div>
+    <>
+      <button
+        className={`core${ready && !open ? " ready" : ""}`}
+        aria-expanded={open}
+        aria-controls="jarvis"
+        aria-label={copy.open}
+        data-cursor="AXIS"
+        onClick={() => (open ? shut() : setOpen(true))}
+      >
+        <span className="halo" aria-hidden="true" />
+        <span className="pip" aria-hidden="true" />
+      </button>
 
-        <div className="max-w-2xl">
-          <h3 className="text-2xl leading-tight font-medium tracking-[-0.02em] md:text-3xl">
-            {reading.headline}
-          </h3>
-          <p className="mt-5 leading-relaxed text-muted">{reading.summary}</p>
-        </div>
-      </div>
-
-      <dl className="border-t border-line">
-        {reading.planes.map((plane) => (
-          <div
-            key={plane.plane}
-            className="grid gap-3 border-b border-line px-6 py-6 md:grid-cols-[14rem_minmax(0,1fr)_5rem] md:items-center md:gap-14 md:px-10"
-          >
-            <dt className="font-mono text-xs tracking-[0.2em] uppercase">
-              {plane.name}
-            </dt>
-            <dd className="order-3 text-sm text-muted md:order-none">
-              <div className="h-0.5 w-full bg-line">
-                <div
-                  className={`h-0.5 ${
-                    plane.plane === reading.drift.plane
-                      ? "bg-accent"
-                      : "bg-ink/70"
-                  }`}
-                  style={{ width: `${Math.max(plane.score, 2)}%` }}
-                />
-              </div>
-              <p className="mt-3">{plane.note}</p>
-            </dd>
-            <dd className="font-mono text-sm text-muted md:text-right">
-              {plane.score}
-            </dd>
+      <aside
+        className={`jarvis${open ? " open" : ""}`}
+        id="jarvis"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="j-title"
+      >
+        <div className="j-head">
+          <div>
+            <div className="j-title" id="j-title">
+              AXIS<i>·</i>CORE
+            </div>
+            <div className={`j-status${online ? " online" : ""}`}>
+              <span className="led" />
+              <span>{status}</span>
+            </div>
           </div>
-        ))}
-      </dl>
-
-      <div className="px-6 py-10 md:px-10 md:py-12">
-        <p className="eyebrow">Next moves</p>
-        <ol className="mt-6 grid gap-5">
-          {reading.moves.map((move, index) => (
-            <li key={move} className="flex gap-5">
-              <span className="font-mono text-xs text-accent">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <p className="max-w-3xl leading-relaxed">{move}</p>
-            </li>
-          ))}
-        </ol>
-
-        <div className="mt-10 flex flex-wrap items-center gap-4">
-          <a
-            href="#contact"
-            className="rounded-full bg-accent px-6 py-3 text-sm font-medium text-base transition-opacity hover:opacity-90"
-          >
-            Take this to a conversation
-          </a>
-          <button
-            type="button"
-            onClick={onReset}
-            className="rounded-full border border-line px-6 py-3 text-sm transition-colors hover:border-ink"
-          >
-            Run it again
+          <button className="j-close" aria-label={copy.close} onClick={shut}>
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
           </button>
         </div>
-      </div>
-    </div>
+
+        <div className="j-log" ref={logRef} data-lenis-prevent aria-live="polite">
+          <div className="m bot">
+            <span className="tag">Axis Core</span>
+            {renderMessage(copy.greet)}
+          </div>
+
+          {turns.map((turn, index) =>
+            turn.role === "assistant" ? (
+              <div className="m bot" key={index}>
+                <span className="tag">Axis Core</span>
+                {renderMessage(turn.content)}
+              </div>
+            ) : (
+              <div className="m me" key={index}>
+                {turn.content}
+              </div>
+            ),
+          )}
+
+          {pending ? (
+            <div className="typing" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </div>
+          ) : null}
+        </div>
+
+        <div className="j-chips">
+          {copy.chips.map((chip) => (
+            <button type="button" key={chip} onClick={() => void ask(chip)}>
+              {chip}
+            </button>
+          ))}
+        </div>
+
+        <form className="j-form" onSubmit={onSubmit}>
+          <textarea
+            id="j-input"
+            ref={inputRef}
+            rows={1}
+            value={draft}
+            placeholder={copy.placeholder}
+            aria-label={copy.placeholder}
+            onChange={(event) => {
+              setDraft(event.target.value);
+              const el = event.target;
+              el.style.height = "auto";
+              el.style.height = `${Math.min(el.scrollHeight, 110)}px`;
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                void ask(draft);
+              }
+            }}
+          />
+
+          {voiceSupported ? (
+            <button
+              type="button"
+              className={`j-btn${recording ? " rec" : ""}`}
+              aria-label={copy.voice}
+              onClick={listen}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="9" y="3" width="6" height="11" rx="3" />
+                <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
+              </svg>
+            </button>
+          ) : null}
+
+          <button type="submit" className="j-btn" aria-label={copy.send} disabled={pending}>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 12h15M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </form>
+
+        <div className="j-foot">{copy.hint}</div>
+      </aside>
+    </>
   );
 }
