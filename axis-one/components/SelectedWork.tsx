@@ -8,6 +8,10 @@ import { mountReels } from "@/lib/reels";
 /**
  * Scene 05 — a horizontal track above 768px, a stack below it.
  *
+ * These are the studio's own builds, not client engagements: no client name,
+ * no delivery year, and the copy says so. Anything that would read as a
+ * track record belongs here only once there is one.
+ *
  * Each frame runs a generative reel on canvas. To use real footage instead,
  * put an MP4 URL in `video` below: the canvas is replaced by a muted, looping,
  * in-view-only <video>.
@@ -19,12 +23,11 @@ const CARDS: Array<{
   idx: CopyKey;
   title: CopyKey;
   tags: CopyKey;
-  year: string;
   video: string;
 }> = [
-  { reel: "1", art: "art-1", idx: "work.1.idx", title: "work.1.title", tags: "work.1.tags", year: "2025", video: "/work/ai-video.mp4" },
-  { reel: "2", art: "art-2", idx: "work.2.idx", title: "work.2.title", tags: "work.2.tags", year: "2025", video: "" },
-  { reel: "3", art: "art-3", idx: "work.3.idx", title: "work.3.title", tags: "work.3.tags", year: "2024", video: "" },
+  { reel: "1", art: "art-1", idx: "work.1.idx", title: "work.1.title", tags: "work.1.tags", video: "/work/ai-video.mp4" },
+  { reel: "2", art: "art-2", idx: "work.2.idx", title: "work.2.title", tags: "work.2.tags", video: "" },
+  { reel: "3", art: "art-3", idx: "work.3.idx", title: "work.3.title", tags: "work.3.tags", video: "" },
 ];
 
 export default function SelectedWork() {
@@ -63,7 +66,7 @@ export default function SelectedWork() {
                 <h3>{t(card.title)}</h3>
                 <div className="tags">
                   <div>{t(card.tags)}</div>
-                  <div>{card.year}</div>
+                  <div>{t("work.origin")}</div>
                 </div>
               </div>
             </article>

@@ -30,7 +30,7 @@ export const COPY = {
   "nav.shift": { en: "Shift", ja: "変化" },
   "nav.axis": { en: "Axis", ja: "軸" },
   "nav.build": { en: "Engagements", ja: "商品" },
-  "nav.work": { en: "Work", ja: "実績" },
+  "nav.work": { en: "Builds", ja: "制作例" },
   "nav.philosophy": { en: "Philosophy", ja: "思想" },
   "nav.cta": { en: "Start a project", ja: "相談する" },
 
@@ -159,27 +159,30 @@ export const COPY = {
   "work.title": {
     en: (
       <>
-        Selected
+        Built in
         <br />
-        work
+        the studio.
       </>
     ),
+    // The work column is 620px wide: at this size Japanese fits about six
+    // full-width characters a line, so the heading is cut to five and three.
     ja: (
       <>
-        主な
+        自社制作の
         <br />
-        実績
+        実物。
       </>
     ),
   },
   "work.lead": {
-    en: "Three projects, three problems. Each one started as a question about the business, not about the pixels.",
-    ja: "3つのプロジェクト、3つの課題。すべては見た目ではなく、事業への問いから始まった。",
+    en: "Not client work. Three systems we built ourselves, so you can see what this approach produces before anyone signs anything.",
+    ja: "クライアント案件ではありません。私たちが自社でつくった3つの仕組みです。契約の前に、このつくり方が何を生むのかを見てもらうために置いています。",
   },
-  "work.1.idx": { en: "Project 01", ja: "プロジェクト 01" },
+  "work.origin": { en: "In-house build", ja: "自社制作" },
+  "work.1.idx": { en: "Build 01", ja: "制作 01" },
   "work.1.title": { en: "AI Video", ja: "AI映像" },
   "work.1.tags": { en: "Film system", ja: "映像制作の仕組み化" },
-  "work.2.idx": { en: "Project 02", ja: "プロジェクト 02" },
+  "work.2.idx": { en: "Build 02", ja: "制作 02" },
   "work.2.title": {
     en: (
       <>
@@ -197,7 +200,7 @@ export const COPY = {
     ),
   },
   "work.2.tags": { en: "Identity · Web", ja: "ブランド・Web" },
-  "work.3.idx": { en: "Project 03", ja: "プロジェクト 03" },
+  "work.3.idx": { en: "Build 03", ja: "制作 03" },
   "work.3.title": {
     en: (
       <>
@@ -215,7 +218,7 @@ export const COPY = {
     ),
   },
   "work.3.tags": { en: "Automation", ja: "自動化" },
-  "work.end": { en: "See the full index", ja: "すべての実績を見る" },
+  "work.end": { en: "Talk about building yours", ja: "御社の場合を相談する" },
 
   "philo.1": {
     en: (
@@ -272,7 +275,7 @@ export const COPY = {
   },
   "foot.contact": { en: "Contact", ja: "お問い合わせ" },
   "foot.startProject": { en: "Start a project", ja: "プロジェクトを相談する" },
-  "foot.workIndex": { en: "Work index", ja: "実績一覧" },
+  "foot.workIndex": { en: "Studio builds", ja: "制作例を見る" },
   "foot.elsewhere": { en: "Elsewhere", ja: "ソーシャル" },
   "foot.place": { en: "Tokyo · Remote", ja: "東京・リモート" },
 } satisfies Record<string, Entry>;

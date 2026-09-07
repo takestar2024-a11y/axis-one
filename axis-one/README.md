@@ -119,5 +119,10 @@ wants a shared store the day this runs on more than one node.
 
 ## Content
 
-Copy, the three case studies and `hello@axisone.jp` are the brand's own. The
-social links in the footer are placeholders.
+The three builds in the work section are the studio's own demonstrations, not
+client engagements — the copy, the labels and the assistant all say so, and
+none of them carries a client name, a delivery year or a result metric. Add
+those only when there is real work to attach them to.
+
+Copy and `hello@axisone.jp` are the brand's own. The social links in the
+footer are placeholders.
