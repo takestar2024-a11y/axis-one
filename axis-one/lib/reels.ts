@@ -266,6 +266,9 @@ export function mountReels(root: HTMLElement): () => void {
     /* real footage path */
     if (src && !saveData) {
       if (canvas) canvas.style.display = "none";
+      // Generated reels are framed at 1.14 and ease to 1 on hover; real footage
+      // is composed, so it sits at 1:1 and keeps its whole frame.
+      art.classList.add("has-video");
       const video = document.createElement("video");
       video.className = "reel";
       video.src = src;
@@ -275,10 +278,18 @@ export function mountReels(root: HTMLElement): () => void {
       video.preload = "none";
       art.appendChild(video);
 
+      // `preload="none"` keeps the file off the wire until the card is near
+      // the viewport. Flipping the attribute alone does not restart resource
+      // selection — load() has to be called explicitly, once.
+      let requested = false;
       const observer = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting) {
-            video.preload = "auto";
+            if (!requested) {
+              requested = true;
+              video.preload = "auto";
+              video.load();
+            }
             void video.play().catch(() => {});
           } else {
             video.pause();
@@ -300,6 +311,7 @@ export function mountReels(root: HTMLElement): () => void {
         video.removeEventListener("timeupdate", onTime);
         video.pause();
         video.remove();
+        art.classList.remove("has-video");
         if (canvas) canvas.style.display = "";
       });
       continue;

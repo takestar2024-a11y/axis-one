@@ -22,7 +22,7 @@ const CARDS: Array<{
   year: string;
   video: string;
 }> = [
-  { reel: "1", art: "art-1", idx: "work.1.idx", title: "work.1.title", tags: "work.1.tags", year: "2025", video: "" },
+  { reel: "1", art: "art-1", idx: "work.1.idx", title: "work.1.title", tags: "work.1.tags", year: "2025", video: "/work/ai-video.mp4" },
   { reel: "2", art: "art-2", idx: "work.2.idx", title: "work.2.title", tags: "work.2.tags", year: "2025", video: "" },
   { reel: "3", art: "art-3", idx: "work.3.idx", title: "work.3.title", tags: "work.3.tags", year: "2024", video: "" },
 ];
