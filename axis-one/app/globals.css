@@ -327,12 +327,36 @@ html[lang="ja"] .shift-lead{font-family:var(--f-jp);font-weight:700;line-height:
   transition:transform .9s var(--ease),color .8s var(--ease);
   color:rgba(255,255,255,.72);
 }
+/* A fixed name track above 768px, so the prices land in one column across
+   all four rows — a ladder is only scannable if the figures line up. */
+@media (min-width:769px){
+  .row .name{flex:0 0 auto;width:clamp(15rem,34vw,32rem)}
+}
+/* price and term, set beside the name — the figure is the point, so it is
+   typed in the display face rather than tucked into the description */
+.row .terms{
+  display:flex;flex-direction:column;gap:.35rem;flex:0 0 auto;
+  transition:transform .9s var(--ease);
+}
+.row .terms b{
+  font-family:var(--f-display);font-weight:700;
+  font-size:clamp(.95rem,1.5vw,1.4rem);letter-spacing:-.01em;
+  color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums;
+  transition:color .8s var(--ease);
+}
+.row .terms i{
+  font-style:normal;font-size:var(--t-micro);letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-3);white-space:nowrap;
+}
+html[lang="ja"] .row .terms i{text-transform:none;letter-spacing:.12em}
 .row .desc{
   margin-left:auto;max-width:34ch;color:var(--ink-3);font-size:clamp(.8rem,.95vw,1rem);
   opacity:0;transform:translateX(24px);transition:opacity .8s var(--ease),transform .9s var(--ease);
 }
 .row.on .num{color:rgba(201,162,39,.14);-webkit-text-stroke-color:var(--gold)}
 .row.on .name{color:#fff;transform:translateX(clamp(.5rem,1.6vw,1.6rem))}
+.row.on .terms{transform:translateX(clamp(.5rem,1.6vw,1.6rem))}
+.row.on .terms b{color:var(--gold-soft)}
 .row.on .desc{opacity:1;transform:translateX(0)}
 
 /* ---------- 09  scene 05 selected work ---------- */
@@ -490,6 +514,7 @@ html[lang="ja"] .card .frame .rec{letter-spacing:.16em}
   .axis{height:280vh}
   .philo{height:280vh}
   .row-in{flex-wrap:wrap;gap:.9rem 1.2rem}
+  .row .terms{flex-basis:100%;flex-direction:row;align-items:baseline;gap:.8rem}
   .row .desc{margin-left:0;flex-basis:100%;opacity:1;transform:none;max-width:100%;font-size:.85rem}
   .row .num{font-size:clamp(2.2rem,13vw,4rem)}
   .work-pin{height:auto;overflow:visible}

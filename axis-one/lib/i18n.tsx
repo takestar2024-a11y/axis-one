@@ -29,7 +29,7 @@ type Entry = { en: ReactNode; ja: ReactNode };
 export const COPY = {
   "nav.shift": { en: "Shift", ja: "変化" },
   "nav.axis": { en: "Axis", ja: "軸" },
-  "nav.build": { en: "Build", ja: "事業領域" },
+  "nav.build": { en: "Engagements", ja: "商品" },
   "nav.work": { en: "Work", ja: "実績" },
   "nav.philosophy": { en: "Philosophy", ja: "思想" },
   "nav.cta": { en: "Start a project", ja: "相談する" },
@@ -118,30 +118,42 @@ export const COPY = {
   "axis.metaLeft": { en: "Fig. 03 — The Axis", ja: "図 03 — 軸" },
   "axis.metaRight": { en: "Structure before speed", ja: "速さより、構造を" },
 
-  "build.title": { en: "What we build", ja: "私たちがつくるもの" },
+  "build.title": { en: "Start with the diagnosis.", ja: "まず、診断から。" },
   "build.lead": {
-    en: "Four disciplines, one operating system. Each one is designed to make the next one compound.",
-    ja: "4つの領域を、ひとつの仕組みとして設計する。それぞれが次を加速させる。",
+    en: "This is not training. Four steps in order, each one earning the next — and the last one leaves AI producing revenue inside your company, not inside a workshop.",
+    ja: "研修では終わりません。4つの段階を順番に。前の段階が次を決め、最後には御社のなかでAIが売上をつくり続けている状態まで持っていきます。",
   },
-  "build.1.name": { en: "AI Systems", ja: "AIシステム" },
+
+  "build.1.name": { en: "AI Diagnosis", ja: "AI経営診断" },
+  "build.1.price": { en: "¥198,000", ja: "¥198,000" },
+  "build.1.terms": { en: "90-minute session", ja: "90分・単発" },
   "build.1.desc": {
-    en: "Agents, pipelines and internal tools that make a team behave like one ten times its size.",
-    ja: "エージェント、パイプライン、社内ツール。10倍の規模のチームのように動く組織をつくる。",
+    en: "Ninety minutes with the people who decide. You leave with the work broken down, the hours AI can take back, and the order to build in.",
+    ja: "90分のヒアリングから業務・集客・営業を分解し、AI化できる箇所、取り戻せる時間、着手する順番をロードマップにして納品します。",
   },
-  "build.2.name": { en: "Creative", ja: "クリエイティブ" },
+
+  "build.2.name": { en: "AI Build", ja: "AI実装" },
+  "build.2.price": { en: "From ¥980,000", ja: "¥980,000〜" },
+  "build.2.terms": { en: "3 months", ja: "3ヶ月" },
   "build.2.desc": {
-    en: "Identity, film and interface — built as one language, not three deliverables.",
-    ja: "ブランド、映像、インターフェース。3つの納品物ではなく、ひとつの言語として設計する。",
+    en: "We build what the diagnosis found — sales, marketing, content or back-office — in the order that moves your number first.",
+    ja: "診断で決めた仕組みを実際に作って動かします。AI営業・マーケティング・コンテンツ・業務自動化から、御社の数字に効く順に。",
   },
-  "build.3.name": { en: "Automation", ja: "自動化" },
+
+  "build.3.name": { en: "AI Growth OS", ja: "AI Growth OS" },
+  "build.3.price": { en: "On request", ja: "応相談" },
+  "build.3.terms": { en: "3–6 months", ja: "3〜6ヶ月" },
   "build.3.desc": {
-    en: "The invisible layer. Everything repeatable stops being done by hand.",
-    ja: "見えない層をつくる。繰り返される作業は、人の手から離す。",
+    en: "Not one tool but the operating system: sales, marketing, operations and the decisions on top, all running on one axis.",
+    ja: "単体のツールではなく、営業・マーケ・業務、そしてその上の経営判断までをひとつの軸につなぐ、会社のOSそのものを構築します。",
   },
-  "build.4.name": { en: "Growth", ja: "グロース" },
+
+  "build.4.name": { en: "AI Partner", ja: "AI経営顧問" },
+  "build.4.price": { en: "¥398,000 / month", ja: "月額 ¥398,000" },
+  "build.4.terms": { en: "6-month minimum", ja: "最低6ヶ月" },
   "build.4.desc": {
-    en: "Acquisition designed as a system, measured to the yen, rebuilt every quarter.",
-    ja: "集客を仕組みとして設計し、円単位で計測し、四半期ごとに組み直す。",
+    en: "Two sessions a month. We keep the system improving — new agents, sharper prompts, the team actually using it, the revenue path tightening.",
+    ja: "月2回の戦略ミーティングで、施策の企画からエージェントの改善、社員の活用支援、売上導線の改善までを継続で持ちます。",
   },
 
   "work.title": {
