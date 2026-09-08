@@ -6,6 +6,7 @@ import {
   systemPrompt,
   type ChatMessage,
 } from "@/lib/axis-core";
+import { record } from "@/lib/leads";
 
 /**
  * AXIS CORE — server proxy.
@@ -137,6 +138,14 @@ export async function POST(request: Request) {
     if (!text) {
       return Response.json({ error: "Empty response.", fallback: true }, { status: 502 });
     }
+
+    // What visitors actually ask is the most useful thing this endpoint
+    // produces. Storing it must never cost them the answer.
+    void record({
+      kind: "chat",
+      lang,
+      messages: [...messages.slice(-2), { role: "assistant", content: text }],
+    });
 
     return Response.json({ text });
   } catch (error) {

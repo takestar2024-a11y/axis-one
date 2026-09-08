@@ -117,6 +117,56 @@ Bad input gets `400`, oversized bodies `413`, too many questions from one
 address `429`. The rate limit is in-memory and therefore per instance — it
 wants a shared store the day this runs on more than one node.
 
+## The free diagnosis
+
+`lib/diagnosis.ts` is a five-question version of the paid AI Diagnosis, run
+inside the assistant panel. It demonstrates the product instead of describing
+it, qualifies the visitor, and earns an email by having something worth sending.
+
+The arithmetic is deliberately inspectable:
+
+```
+saved(task) = hours the visitor reported x the task's `automatable` share
+range       = 80% of that, up to 100% of it
+```
+
+Every hour comes from the visitor's own answer. The only figure AXIS ONE
+supplies is `automatable` — the share of a task a system can realistically take
+over, from 0.85 for meeting minutes down to 0.5 for invoicing, where the
+bottleneck is systems integration rather than AI. Those values are assumptions
+and are meant to be argued with: change them in `TASKS`, run
+`npm run diagnosis:check`, and see whether the output is a number you would
+defend to a business owner. Nothing else moves.
+
+Headcount and AI maturity steer which engagement is recommended, never the
+hours — inflating someone's own number is how a tool like this loses its
+credibility. Below six recoverable hours a month the diagnosis cannot pay for
+itself inside a year, so the recommendation is `not-yet` and the panel says so
+rather than quoting a price the numbers cannot carry.
+
+`POST /api/diagnosis` scores the sheet server-side, so the assumptions live in
+one place, and records it either way.
+
+## Records
+
+`lib/leads.ts` keeps three kinds of record: a completed `diagnosis`, a `lead`
+once an email is attached, and `chat` — the questions visitors actually ask,
+which is the most useful thing the assistant produces.
+
+Two sinks, both optional, tried in order, and never allowed to break the
+request they belong to:
+
+```bash
+LEADS_WEBHOOK_URL=https://...   # Slack, Make, n8n, a CRM. The serverless option.
+LEADS_FILE=.data/leads.jsonl    # One JSON object per line. Needs a writable disk.
+```
+
+With neither set, records go to the server log rather than being dropped.
+
+Emails are personal data: the panel states the purpose beside the field, and
+the record keeps nothing else about the person. Anything more — an IP, a
+session trail — is a decision to make deliberately, not to inherit.
+
 ## Content
 
 The three builds in the work section are the studio's own demonstrations, not

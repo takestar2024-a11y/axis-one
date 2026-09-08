@@ -651,6 +651,14 @@ html[lang="ja"] .foot-col p,html[lang="ja"] .foot-col a{line-height:2.2}
   transition:border-color .5s var(--ease),color .5s var(--ease),background .5s var(--ease);
 }
 .j-chips button:hover{border-color:rgba(201,162,39,.7);color:var(--gold-soft);background:rgba(201,162,39,.07)}
+/* a picked option in a multi-select step */
+.j-chips button.on{border-color:var(--gold);color:var(--gold-soft);background:rgba(201,162,39,.14)}
+/* the one chip that moves the flow forward */
+.j-chips button.go{border-color:rgba(232,215,163,.6);color:#fff;background:rgba(157,78,221,.18)}
+.j-chips button.go:hover{border-color:var(--gold-soft);background:rgba(157,78,221,.28)}
+.j-chips button:disabled{opacity:.35;cursor:not-allowed}
+.j-chips button:disabled:hover{border-color:var(--hair);color:var(--ink-2);background:none}
+.j-form textarea:disabled{opacity:.4;cursor:not-allowed}
 
 .j-form{border-top:1px solid var(--hair);padding:.75rem .75rem .8rem 1.1rem;display:flex;align-items:flex-end;gap:.5rem;flex:0 0 auto}
 .j-form textarea{

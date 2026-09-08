@@ -11,13 +11,33 @@ import {
 } from "react";
 import { useLang } from "@/lib/i18n";
 import { UI, localAnswer, type ChatMessage } from "@/lib/axis-core";
+import {
+  HEADCOUNTS,
+  HOUR_BANDS,
+  INDUSTRIES,
+  MATURITIES,
+  PROMPTS,
+  RECOMMENDED,
+  TASKS,
+  tasksFor,
+  type Answers,
+  type HeadcountId,
+  type IndustryId,
+  type MaturityId,
+  type Reading,
+} from "@/lib/diagnosis";
 
 /**
  * AXIS CORE — the assistant.
  *
- * Answers come from `/api/axis-core` when the site is connected to a model,
- * and from the local knowledge core otherwise. The visitor cannot tell the
- * difference except for the status line, and the panel never fails to reply.
+ * Two modes in one panel. Free chat answers questions; the guided diagnosis
+ * runs the five-question version of the paid product, which is the reason the
+ * panel exists at all — it demonstrates the offer instead of describing it,
+ * and gives the visitor a reason to leave an address.
+ *
+ * Chat answers come from `/api/axis-core` when a model is connected and from
+ * the local knowledge core otherwise. The diagnosis is always scored on the
+ * server, so the assumptions behind the arithmetic stay in one place.
  */
 
 const OPEN_EVENT = "axis-core:open";
@@ -67,9 +87,26 @@ function renderMessage(text: string): ReactNode[] {
   );
 }
 
+/** Where the guided diagnosis currently is. `off` means ordinary chat. */
+type Flow =
+  | { step: "off" }
+  | { step: "industry" }
+  | { step: "headcount" }
+  | { step: "tasks"; picked: string[]; industry: IndustryId }
+  | { step: "hours"; queue: string[]; at: number }
+  | { step: "maturity" }
+  | { step: "email" };
+
+interface Option {
+  id: string;
+  label: string;
+  selected?: boolean;
+}
+
 export default function AxisCore() {
   const { lang } = useLang();
   const copy = UI[lang];
+  const prompts = PROMPTS[lang];
 
   const [open, setOpen] = useState(false);
   const [turns, setTurns] = useState<ChatMessage[]>([]);
@@ -78,6 +115,14 @@ export default function AxisCore() {
   const [recording, setRecording] = useState(false);
   const [ready, setReady] = useState(false);
   const [draft, setDraft] = useState("");
+  const [flow, setFlow] = useState<Flow>({ step: "off" });
+
+  const answers = useRef<{
+    industry?: IndustryId;
+    headcount?: HeadcountId;
+    hours: Record<string, number>;
+    maturity?: MaturityId;
+  }>({ hours: {} });
 
   const logRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -89,6 +134,20 @@ export default function AxisCore() {
   const touch =
     typeof window !== "undefined" &&
     window.matchMedia("(hover: none), (pointer: coarse)").matches;
+
+  const voiceSupported = useSyncExternalStore(
+    subscribeNever,
+    hasRecognition,
+    voiceUnsupported,
+  );
+
+  const say = useCallback((content: string) => {
+    setTurns((current) => [...current, { role: "assistant", content }]);
+  }, []);
+
+  const heard = useCallback((content: string) => {
+    setTurns((current) => [...current, { role: "user", content }]);
+  }, []);
 
   /* ---------- speaking ---------- */
   const speak = useCallback(
@@ -105,7 +164,7 @@ export default function AxisCore() {
     [lang],
   );
 
-  /* ---------- asking ---------- */
+  /* ---------- free chat ---------- */
   const ask = useCallback(
     async (text: string, viaVoice = false) => {
       const question = text.trim();
@@ -129,7 +188,6 @@ export default function AxisCore() {
         busy.current = false;
       };
 
-      // Once the endpoint has told us there is no model, stop asking it.
       if (onlineRef.current === false) {
         window.setTimeout(() => settle(localAnswer(question, lang), false), 420);
         return;
@@ -145,7 +203,6 @@ export default function AxisCore() {
           await response.json();
 
         if (!response.ok || !payload.text) {
-          // A missing model falls back silently; a real failure says so.
           if (payload.fallback || response.status === 503) {
             settle(localAnswer(question, lang), false);
           } else {
@@ -160,6 +217,165 @@ export default function AxisCore() {
     },
     [copy.error, lang, speak, turns],
   );
+
+  /* ---------- the guided diagnosis ---------- */
+
+  const startDiagnosis = useCallback(() => {
+    answers.current = { hours: {} };
+    say(prompts.intro);
+    say(prompts.industry);
+    setFlow({ step: "industry" });
+  }, [prompts, say]);
+
+  const exitDiagnosis = useCallback(() => {
+    setFlow({ step: "off" });
+  }, []);
+
+  const submitDiagnosis = useCallback(
+    async (email?: string) => {
+      const { industry, headcount, maturity, hours } = answers.current;
+      if (!industry || !headcount || !maturity) return;
+
+      setPending(true);
+      try {
+        const response = await fetch("/api/diagnosis", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            answers: { industry, headcount, maturity, hours } satisfies Answers,
+            lang,
+            email,
+          }),
+        });
+        const payload: { reading?: Reading; error?: string } = await response.json();
+        if (!response.ok || !payload.reading) throw new Error(payload.error);
+
+        if (email) {
+          say(prompts.emailThanks);
+          setFlow({ step: "off" });
+          return;
+        }
+
+        const reading = payload.reading;
+        const breakdown = reading.lines
+          .map((line) => `・${line.label} … ${line.savedLow}〜${line.savedHigh}h`)
+          .join("\n");
+        const next = RECOMMENDED[reading.recommendation][lang];
+
+        say(
+          `**${reading.headline}**\n\n${breakdown}\n\n${reading.summary}\n\n` +
+            `**${next.name}**\n${next.why}\n\n${prompts.disclaimer}`,
+        );
+        say(`${prompts.emailAsk}\n${prompts.privacy}`);
+        setFlow({ step: "email" });
+      } catch {
+        say(copy.error);
+        setFlow({ step: "off" });
+      } finally {
+        setPending(false);
+      }
+    },
+    [copy.error, lang, prompts, say],
+  );
+
+  /** One tap answers the current question and moves to the next. */
+  const choose = useCallback(
+    (option: Option) => {
+      if (pending) return;
+
+      if (flow.step === "industry") {
+        answers.current.industry = option.id as IndustryId;
+        heard(option.label);
+        say(prompts.headcount);
+        setFlow({ step: "headcount" });
+        return;
+      }
+
+      if (flow.step === "headcount") {
+        answers.current.headcount = option.id as HeadcountId;
+        heard(option.label);
+        say(`${prompts.tasks}\n${prompts.tasksHint}`);
+        setFlow({
+          step: "tasks",
+          picked: [],
+          industry: answers.current.industry ?? "other",
+        });
+        return;
+      }
+
+      if (flow.step === "tasks") {
+        const picked = flow.picked.includes(option.id)
+          ? flow.picked.filter((id) => id !== option.id)
+          : flow.picked.length >= 4
+            ? flow.picked
+            : [...flow.picked, option.id];
+        setFlow({ step: "tasks", picked, industry: flow.industry });
+        return;
+      }
+
+      if (flow.step === "hours") {
+        const taskId = flow.queue[flow.at];
+        answers.current.hours[taskId] = Number(option.id);
+        heard(option.label);
+        const next = flow.at + 1;
+        if (next < flow.queue.length) {
+          const task = TASKS.find((item) => item.id === flow.queue[next]);
+          say(prompts.hours(task?.label[lang] ?? ""));
+          setFlow({ step: "hours", queue: flow.queue, at: next });
+        } else {
+          say(prompts.maturity);
+          setFlow({ step: "maturity" });
+        }
+        return;
+      }
+
+      if (flow.step === "maturity") {
+        answers.current.maturity = option.id as MaturityId;
+        heard(option.label);
+        setFlow({ step: "off" });
+        void submitDiagnosis();
+      }
+    },
+    [flow, heard, lang, pending, prompts, say, submitDiagnosis],
+  );
+
+  const confirmTasks = useCallback(() => {
+    if (flow.step !== "tasks" || flow.picked.length === 0) return;
+    const labels = flow.picked
+      .map((id) => TASKS.find((task) => task.id === id)?.label[lang] ?? id)
+      .join(" / ");
+    heard(labels);
+    const first = TASKS.find((task) => task.id === flow.picked[0]);
+    say(prompts.hours(first?.label[lang] ?? ""));
+    setFlow({ step: "hours", queue: flow.picked, at: 0 });
+  }, [flow, heard, lang, prompts, say]);
+
+  /** Options for whichever question is on screen. */
+  function currentOptions(): Option[] {
+    if (flow.step === "industry") {
+      return INDUSTRIES.map((item) => ({ id: item.id, label: item.label[lang] }));
+    }
+    if (flow.step === "headcount") {
+      return HEADCOUNTS.map((item) => ({ id: item.id, label: item.label[lang] }));
+    }
+    if (flow.step === "tasks") {
+      return tasksFor(flow.industry).map((task) => ({
+        id: task.id,
+        label: task.label[lang],
+        selected: flow.picked.includes(task.id),
+      }));
+    }
+    if (flow.step === "hours") {
+      return HOUR_BANDS.map((band) => ({
+        id: String(band.value),
+        label: band.label[lang],
+      }));
+    }
+    if (flow.step === "maturity") {
+      return MATURITIES.map((item) => ({ id: item.id, label: item.label[lang] }));
+    }
+    return [];
+  }
 
   /* ---------- panel open / close ---------- */
   const shut = useCallback(() => {
@@ -181,7 +397,6 @@ export default function AxisCore() {
     const focus = window.setTimeout(() => {
       if (!touch) inputRef.current?.focus();
     }, 420);
-
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") shut();
     };
@@ -192,13 +407,11 @@ export default function AxisCore() {
     };
   }, [open, shut, touch]);
 
-  /* the core wakes up once the hero has settled */
   useEffect(() => {
     const id = window.setTimeout(() => setReady(true), 5200);
     return () => window.clearTimeout(id);
   }, []);
 
-  /* keep the log pinned to the newest message */
   useEffect(() => {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
   }, [turns, pending, open]);
@@ -227,23 +440,31 @@ export default function AxisCore() {
     try {
       recognition.start();
     } catch {
-      // Already running — the onend handler will reset the button.
+      // Already running — onend resets the button.
     }
   }, [ask, lang, recording]);
 
-  // Capability detection is external state that never changes after load, and
-  // it must not run during SSR — hence the server snapshot of `false`.
-  const voiceSupported = useSyncExternalStore(
-    subscribeNever,
-    hasRecognition,
-    voiceUnsupported,
-  );
-
+  /* ---------- submitting the composer ---------- */
   function onSubmit(event: FormEvent) {
     event.preventDefault();
-    void ask(draft);
+    const value = draft.trim();
+    if (!value) return;
+
+    if (flow.step === "email") {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        say(prompts.emailInvalid);
+        return;
+      }
+      heard(value);
+      setDraft("");
+      void submitDiagnosis(value);
+      return;
+    }
+    void ask(value);
   }
 
+  const options = currentOptions();
+  const guided = flow.step !== "off" && flow.step !== "email";
   const status = online ? copy.live : copy.local;
 
   return (
@@ -313,11 +534,48 @@ export default function AxisCore() {
         </div>
 
         <div className="j-chips">
-          {copy.chips.map((chip) => (
-            <button type="button" key={chip} onClick={() => void ask(chip)}>
-              {chip}
+          {options.length > 0 ? (
+            <>
+              {options.map((option) => (
+                <button
+                  type="button"
+                  key={option.id}
+                  className={option.selected ? "on" : undefined}
+                  onClick={() => choose(option)}
+                >
+                  {option.label}
+                </button>
+              ))}
+              {flow.step === "tasks" ? (
+                <button
+                  type="button"
+                  className="go"
+                  disabled={flow.picked.length === 0}
+                  onClick={confirmTasks}
+                >
+                  {prompts.tasksConfirm}
+                </button>
+              ) : null}
+              <button type="button" onClick={exitDiagnosis}>
+                {prompts.exit}
+              </button>
+            </>
+          ) : flow.step === "email" ? (
+            <button type="button" onClick={() => setFlow({ step: "off" })}>
+              {prompts.skip}
             </button>
-          ))}
+          ) : (
+            <>
+              <button type="button" className="go" onClick={startDiagnosis}>
+                {prompts.start}
+              </button>
+              {copy.chips.map((chip) => (
+                <button type="button" key={chip} onClick={() => void ask(chip)}>
+                  {chip}
+                </button>
+              ))}
+            </>
+          )}
         </div>
 
         <form className="j-form" onSubmit={onSubmit}>
@@ -326,7 +584,14 @@ export default function AxisCore() {
             ref={inputRef}
             rows={1}
             value={draft}
-            placeholder={copy.placeholder}
+            disabled={guided}
+            placeholder={
+              guided
+                ? prompts.tasksHint
+                : flow.step === "email"
+                  ? prompts.emailPlaceholder
+                  : copy.placeholder
+            }
             aria-label={copy.placeholder}
             onChange={(event) => {
               setDraft(event.target.value);
@@ -337,12 +602,12 @@ export default function AxisCore() {
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {
                 event.preventDefault();
-                void ask(draft);
+                onSubmit(event);
               }
             }}
           />
 
-          {voiceSupported ? (
+          {voiceSupported && !guided ? (
             <button
               type="button"
               className={`j-btn${recording ? " rec" : ""}`}
@@ -356,14 +621,19 @@ export default function AxisCore() {
             </button>
           ) : null}
 
-          <button type="submit" className="j-btn" aria-label={copy.send} disabled={pending}>
+          <button
+            type="submit"
+            className="j-btn"
+            aria-label={copy.send}
+            disabled={pending || guided}
+          >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 12h15M13 6l6 6-6 6" />
             </svg>
           </button>
         </form>
 
-        <div className="j-foot">{copy.hint}</div>
+        <div className="j-foot">{flow.step === "email" ? prompts.privacy : copy.hint}</div>
       </aside>
     </>
   );
