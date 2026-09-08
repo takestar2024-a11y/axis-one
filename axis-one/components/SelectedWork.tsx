@@ -26,8 +26,8 @@ const CARDS: Array<{
   video: string;
 }> = [
   { reel: "1", art: "art-1", idx: "work.1.idx", title: "work.1.title", tags: "work.1.tags", video: "/work/ai-video.mp4" },
-  { reel: "2", art: "art-2", idx: "work.2.idx", title: "work.2.title", tags: "work.2.tags", video: "" },
-  { reel: "3", art: "art-3", idx: "work.3.idx", title: "work.3.title", tags: "work.3.tags", video: "" },
+  { reel: "2", art: "art-2", idx: "work.2.idx", title: "work.2.title", tags: "work.2.tags", video: "/work/brand-experience.mp4" },
+  { reel: "3", art: "art-3", idx: "work.3.idx", title: "work.3.title", tags: "work.3.tags", video: "/work/growth-system.mp4" },
 ];
 
 export default function SelectedWork() {
