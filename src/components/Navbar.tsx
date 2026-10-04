@@ -1,4 +1,4 @@
-const links = ["platform", "solutions", "company", "support"];
+import type { Copy } from "../i18n";
 
 function Logo() {
   return (
@@ -11,7 +11,7 @@ function Logo() {
   );
 }
 
-export default function Navbar() {
+export default function Navbar({ copy }: { copy: Copy }) {
   return (
     <div className="absolute z-20 px-6 md:px-10 pt-6 top-0 left-0 right-0">
       <nav className="flex items-center justify-between gap-4">
@@ -21,7 +21,7 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-1 bg-neutral-900/90 backdrop-blur rounded-full px-3 py-2">
-          {links.map((l) => (
+          {copy.links.map((l) => (
             <a
               key={l}
               href="#"
@@ -33,7 +33,7 @@ export default function Navbar() {
         </div>
 
         <button className="bg-white text-black text-sm font-normal rounded-full px-6 py-3 hover:bg-neutral-200 transition-colors">
-          get started
+          {copy.cta}
         </button>
       </nav>
     </div>
