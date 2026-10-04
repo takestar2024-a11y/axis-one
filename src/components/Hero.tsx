@@ -9,6 +9,8 @@ const t = copy[lang];
 const VIDEO_SRC =
   "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260418_063509_7d167302-4fd4-480b-8260-18ab572333d4.mp4";
 
+export const VIDEO = VIDEO_SRC;
+
 const titleBase = "hero-title absolute text-white font-medium text-[14vw] md:text-[13vw]";
 
 export default function Hero() {
@@ -19,6 +21,10 @@ export default function Hero() {
   return (
     <>
     <section className="relative h-screen w-full overflow-hidden bg-black">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(255,255,255,0.16),transparent_55%),radial-gradient(ellipse_at_20%_80%,rgba(255,255,255,0.08),transparent_50%)]"
+      />
       <video
         className="absolute inset-0 w-full h-full object-cover"
         autoPlay

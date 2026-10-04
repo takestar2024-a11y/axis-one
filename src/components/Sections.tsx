@@ -1,4 +1,5 @@
 import type { Copy } from "../i18n";
+import { VIDEO } from "./Hero";
 
 const wrap = "mx-auto w-full max-w-6xl px-6 md:px-10";
 const eyebrow = "text-xs md:text-sm text-white/70 mb-4";
@@ -212,12 +213,24 @@ export function FinalCta({ t }: { t: Copy }) {
   return (
     <section className="bg-black py-20 md:py-32">
       <div className={wrap}>
-        <div className="rounded-[2rem] bg-neutral-900/90 px-8 py-16 md:py-24 text-center border border-white/5">
+        <div className="relative overflow-hidden rounded-[2rem] bg-neutral-900 px-8 py-16 md:py-24 text-center border border-white/5">
+          <video
+            className="absolute inset-0 w-full h-full object-cover opacity-40"
+            autoPlay
+            loop
+            muted
+            playsInline
+            src={VIDEO}
+            aria-hidden="true"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 to-black/70" />
+          <div className="relative">
           <h2 className="hero-title text-5xl md:text-8xl font-medium">{t.finalCta.title}</h2>
           <p className="mx-auto mt-6 max-w-xl text-[15px] leading-snug text-white/70">{t.finalCta.body}</p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a href="#pricing" className={cta}>{t.finalCta.primary}</a>
             <a href="#faq" className={ctaGhost}>{t.finalCta.secondary}</a>
+          </div>
           </div>
         </div>
       </div>
