@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Navbar from "./Navbar";
 import { copy, detectLang } from "../i18n";
+import { Trust, Problem, Features, How, Numbers, Voices, Pricing, Faq, FinalCta, Footer } from "./Sections";
 
 const lang = detectLang();
 const t = copy[lang];
@@ -16,6 +17,7 @@ export default function Hero() {
   }, []);
 
   return (
+    <>
     <section className="relative h-screen w-full overflow-hidden bg-black">
       <video
         className="absolute inset-0 w-full h-full object-cover"
@@ -67,5 +69,16 @@ export default function Hero() {
         </div>
       </div>
     </section>
+    <Trust t={t} />
+    <Problem t={t} />
+    <Features t={t} />
+    <How t={t} />
+    <Numbers t={t} />
+    <Voices t={t} />
+    <Pricing t={t} />
+    <Faq t={t} />
+    <FinalCta t={t} />
+    <Footer t={t} />
+    </>
   );
 }

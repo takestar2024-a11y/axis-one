@@ -1,5 +1,7 @@
 import type { Copy } from "../i18n";
 
+const hrefs = ["#features", "#how", "#pricing", "#faq"];
+
 function Logo() {
   return (
     <svg viewBox="0 0 256 256" className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -21,10 +23,10 @@ export default function Navbar({ copy }: { copy: Copy }) {
         </div>
 
         <div className="hidden md:flex items-center gap-1 bg-neutral-900/90 backdrop-blur rounded-full px-3 py-2">
-          {copy.links.map((l) => (
+          {copy.links.map((l, i) => (
             <a
               key={l}
-              href="#"
+              href={hrefs[i]}
               className="text-neutral-300 hover:text-white transition-colors text-sm px-5 py-2 rounded-full"
             >
               {l}
@@ -32,9 +34,9 @@ export default function Navbar({ copy }: { copy: Copy }) {
           ))}
         </div>
 
-        <button className="bg-white text-black text-sm font-normal rounded-full px-6 py-3 hover:bg-neutral-200 transition-colors">
+        <a href="#pricing" className="bg-white text-black text-sm font-normal rounded-full px-6 py-3 hover:bg-neutral-200 transition-colors">
           {copy.cta}
-        </button>
+        </a>
       </nav>
     </div>
   );
