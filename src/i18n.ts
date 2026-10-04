@@ -277,5 +277,5 @@ export const copy: Record<Lang, Copy> = {
 export function detectLang(): Lang {
   const param = new URLSearchParams(window.location.search).get("lang");
   if (param === "ja" || param === "en") return param;
-  return navigator.language?.toLowerCase().startsWith("ja") ? "ja" : "en";
+  return "ja";
 }
