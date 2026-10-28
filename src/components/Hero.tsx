@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Navbar from "./Navbar";
 import { copy, detectLang } from "../i18n";
-import { Trust, Problem, Features, How, Numbers, Voices, Pricing, Faq, FinalCta, Footer } from "./Sections";
+import { Trust, Problem, Features, Confidential, How, Numbers, Voices, Pricing, Faq, FinalCta, Footer } from "./Sections";
 
 const lang = detectLang();
 const t = copy[lang];
@@ -78,6 +78,7 @@ export default function Hero() {
     <Trust t={t} />
     <Problem t={t} />
     <Features t={t} />
+    <Confidential t={t} />
     <How t={t} />
     <Numbers t={t} />
     <Voices t={t} />

@@ -71,6 +71,58 @@ export function Features({ t }: { t: Copy }) {
   );
 }
 
+export function Confidential({ t }: { t: Copy }) {
+  const c = t.confidential;
+  return (
+    <section id="confidential" className="bg-black py-20 md:py-32">
+      <div className={wrap}>
+        <div className="flex items-center gap-3 mb-4">
+          <p className="text-xs md:text-sm text-white/70">{c.eyebrow}</p>
+          <span className="text-xs border border-white/40 rounded-full px-3 py-1">{c.badge}</span>
+        </div>
+        <h2 className={h2}>{c.title}</h2>
+        <p className="mt-6 max-w-2xl text-[15px] leading-snug text-white/90">{c.body}</p>
+
+        <div className="mt-14 overflow-hidden rounded-3xl border border-white/10">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-neutral-900/90 text-white/70">
+              <tr>
+                {c.headers.map((h) => (
+                  <th key={h} scope="col" className="px-4 md:px-8 py-4 font-normal">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              {c.rows.map(([state, legacy, ours]) => (
+                <tr key={state}>
+                  <th scope="row" className="px-4 md:px-8 py-5 font-medium">{state}</th>
+                  <td className="px-4 md:px-8 py-5 text-white/70">{legacy}</td>
+                  <td className="px-4 md:px-8 py-5">{ours}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <h3 className="mt-20 text-2xl md:text-3xl font-medium tracking-tight">{c.layersTitle}</h3>
+        <ol className="mt-8 grid gap-4 md:grid-cols-3">
+          {c.layers.map((l, i) => (
+            <li
+              key={l.title}
+              className={`rounded-3xl p-8 ${i === 1 ? "bg-white text-black" : "bg-neutral-900/90"}`}
+            >
+              <span className={`text-sm ${i === 1 ? "text-black/50" : "text-white/40"}`}>layer {i + 1}</span>
+              <h4 className="mt-6 text-xl font-medium tracking-tight">{l.title}</h4>
+              <p className={`mt-3 text-sm leading-snug ${i === 1 ? "text-black/70" : "text-white/70"}`}>{l.body}</p>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-6 text-xs text-white/40 max-w-2xl">※ {c.note}</p>
+      </div>
+    </section>
+  );
+}
+
 export function How({ t }: { t: Copy }) {
   return (
     <section id="how" className="bg-black py-20 md:py-32">

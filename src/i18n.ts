@@ -9,6 +9,17 @@ export interface Copy {
   trust: { label: string; names: string[] };
   problem: { eyebrow: string; title: string; body: string; points: { k: string; v: string }[] };
   features: { eyebrow: string; title: string; items: { title: string; body: string }[] };
+  confidential: {
+    eyebrow: string;
+    badge: string;
+    title: string;
+    body: string;
+    headers: [string, string, string];
+    rows: [string, string, string][];
+    layersTitle: string;
+    layers: { title: string; body: string }[];
+    note: string;
+  };
   how: { eyebrow: string; title: string; steps: { title: string; body: string }[] };
   numbers: { value: string; label: string }[];
   voices: { eyebrow: string; title: string; items: { quote: string; name: string; role: string }[] };
@@ -68,6 +79,25 @@ export const copy: Record<Lang, Copy> = {
         { title: "automated compliance", body: "soc 2, iso 27001 and gdpr checks run continuously, so reports are always ready." },
         { title: "one-click recovery", body: "immutable backups let you roll back to a clean state after any incident." },
       ],
+    },
+    confidential: {
+      eyebrow: "confidential computing",
+      badge: "early access",
+      title: "encrypted even while it's being processed",
+      body: "most security stops at storage and transit. securify runs analysis inside hardware-isolated enclaves, so your data stays encrypted in memory and is never visible to cloud operators, the host os, or us.",
+      headers: ["state", "typical encryption", "securify"],
+      rows: [
+        ["in transit", "tls", "tls + payload encrypted end to end"],
+        ["at rest", "disk / database encryption", "keys wrapped in kms, never stored in the clear"],
+        ["in use", "decrypted in memory", "decrypted only inside a hardware tee"],
+      ],
+      layersTitle: "three layers, because nothing is absolute",
+      layers: [
+        { title: "identity", body: "mfa and least-privilege access stop impersonation at the edge." },
+        { title: "trust layer", body: "keys are released only to attested enclaves running verified code." },
+        { title: "defensive ai", body: "behavior is monitored in real time and anomalies are blocked automatically." },
+      ],
+      note: "hardware enclaves are not invulnerable. we combine them with the layers above and keep firmware and images up to date.",
     },
     how: {
       eyebrow: "how it works",
@@ -188,6 +218,25 @@ export const copy: Record<Lang, Copy> = {
         { title: "コンプライアンス自動化", body: "soc 2、iso 27001、gdpr への対応を常時チェック。レポートはいつでも出せます。" },
         { title: "ワンクリック復旧", body: "改ざんできないバックアップで、インシデント後もすぐに正常な状態へ戻せます。" },
       ],
+    },
+    confidential: {
+      eyebrow: "コンフィデンシャルコンピューティング",
+      badge: "先行提供予定",
+      title: "処理中のデータも、暗号化したまま。",
+      body: "多くのセキュリティが守るのは「保存時」と「通信時」まで。securify はハードウェアで隔離された領域（TEE）の中だけでデータを処理するため、クラウド事業者やサーバー管理者、私たち securify からも中身は見えない設計です。",
+      headers: ["データの状態", "一般的な暗号化", "securify"],
+      rows: [
+        ["通信時", "tls による通信の暗号化", "tls に加え、中身もエンドツーエンドで暗号化"],
+        ["保存時", "ディスク・データベースの暗号化", "鍵は kms で保護し、平文では保存しない"],
+        ["処理中", "メモリ上で平文に戻る", "ハードウェアの TEE の中でだけ復号"],
+      ],
+      layersTitle: "「絶対」はないから、3層で守る",
+      layers: [
+        { title: "認証", body: "多要素認証と最小権限で、なりすましを入口で止めます。" },
+        { title: "信頼基盤", body: "正しいプログラムが TEE で動いていると証明できたときだけ、鍵を渡します。" },
+        { title: "防御側 ai", body: "挙動をリアルタイムで監視し、異常を自動で遮断します。" },
+      ],
+      note: "TEE も万能ではありません。上記の多層防御と、ファームウェアの継続的な更新を組み合わせて運用します。",
     },
     how: {
       eyebrow: "導入の流れ",
