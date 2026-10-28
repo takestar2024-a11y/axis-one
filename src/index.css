@@ -41,3 +41,60 @@ html[lang='ja'] h3,
 html[lang='ja'] p {
   word-break: auto-phrase;
 }
+
+/* MotionImage: fade-up reveal, slow ken-burns zoom, periodic sheen sweep */
+.motion-frame {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.motion-frame.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.motion-frame.is-visible .motion-zoom {
+  animation: kenburns 18s ease-in-out infinite alternate;
+}
+
+.motion-sheen {
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.12) 50%, transparent 60%);
+  background-size: 250% 100%;
+  background-position: 150% 0;
+}
+
+.motion-frame.is-visible .motion-sheen {
+  animation: sheen 7s ease-in-out 1.2s infinite;
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1) translate(0, 0);
+  }
+  to {
+    transform: scale(1.05) translate(-0.6%, -0.6%);
+  }
+}
+
+@keyframes sheen {
+  0% {
+    background-position: 150% 0;
+  }
+  30%,
+  100% {
+    background-position: -50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-frame {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .motion-frame.is-visible .motion-zoom,
+  .motion-frame.is-visible .motion-sheen {
+    animation: none;
+  }
+}

@@ -1,5 +1,7 @@
 import type { Copy } from "../i18n";
 import { VIDEO } from "./Hero";
+import MotionImage from "./MotionImage";
+import { showcase } from "../showcase";
 
 const wrap = "mx-auto w-full max-w-6xl px-6 md:px-10";
 const eyebrow = "text-xs md:text-sm text-white/70 mb-4";
@@ -30,9 +32,14 @@ export function Problem({ t }: { t: Copy }) {
   return (
     <section className="bg-black py-20 md:py-32">
       <div className={wrap}>
-        <p className={eyebrow}>{t.problem.eyebrow}</p>
-        <h2 className={h2}>{t.problem.title}</h2>
-        <p className="mt-6 max-w-xl text-[15px] leading-snug text-white/90">{t.problem.body}</p>
+        <div className="grid gap-10 md:grid-cols-2 md:items-center">
+          <div>
+            <p className={eyebrow}>{t.problem.eyebrow}</p>
+            <h2 className={h2}>{t.problem.title}</h2>
+            <p className="mt-6 max-w-xl text-[15px] leading-snug text-white/90">{t.problem.body}</p>
+          </div>
+          <MotionImage {...showcase.strategy} />
+        </div>
         <div className="mt-14 grid gap-px md:grid-cols-3 bg-white/10 rounded-3xl overflow-hidden">
           {t.problem.points.map((p) => (
             <div key={p.k} className="bg-black p-8 md:p-10">
@@ -50,8 +57,13 @@ export function Features({ t }: { t: Copy }) {
   return (
     <section id="features" className="bg-black py-20 md:py-32">
       <div className={wrap}>
-        <p className={eyebrow}>{t.features.eyebrow}</p>
-        <h2 className={h2}>{t.features.title}</h2>
+        <div className="grid gap-10 md:grid-cols-2 md:items-center">
+          <MotionImage {...showcase.threats} className="order-last md:order-first" />
+          <div>
+            <p className={eyebrow}>{t.features.eyebrow}</p>
+            <h2 className={h2}>{t.features.title}</h2>
+          </div>
+        </div>
         <div className="mt-14 grid gap-4 md:grid-cols-3">
           {t.features.items.map((f, i) => (
             <article
@@ -162,8 +174,13 @@ export function Voices({ t }: { t: Copy }) {
   return (
     <section className="bg-black py-20 md:py-32">
       <div className={wrap}>
-        <p className={eyebrow}>{t.voices.eyebrow}</p>
-        <h2 className={h2}>{t.voices.title}</h2>
+        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr] md:items-center">
+          <div>
+            <p className={eyebrow}>{t.voices.eyebrow}</p>
+            <h2 className={h2}>{t.voices.title}</h2>
+          </div>
+          <MotionImage {...showcase.confidence} className="max-w-md md:ml-auto" />
+        </div>
         <div className="mt-14 grid gap-4 md:grid-cols-3">
           {t.voices.items.map((v) => (
             <figure key={v.name} className="rounded-3xl bg-neutral-900/90 p-8 flex flex-col justify-between gap-10">
@@ -184,9 +201,14 @@ export function Pricing({ t }: { t: Copy }) {
   return (
     <section id="pricing" className="bg-black py-20 md:py-32">
       <div className={wrap}>
-        <p className={eyebrow}>{t.pricing.eyebrow}</p>
-        <h2 className={h2}>{t.pricing.title}</h2>
-        <p className="mt-6 text-[15px] text-white/70">{t.pricing.note}</p>
+        <div className="grid gap-10 md:grid-cols-[1fr_1.4fr] md:items-center">
+          <MotionImage {...showcase.investment} className="order-last md:order-first max-w-md" />
+          <div>
+            <p className={eyebrow}>{t.pricing.eyebrow}</p>
+            <h2 className={h2}>{t.pricing.title}</h2>
+            <p className="mt-6 text-[15px] text-white/70">{t.pricing.note}</p>
+          </div>
+        </div>
         <div className="mt-14 grid gap-4 md:grid-cols-3 items-stretch">
           {t.pricing.plans.map((p, i) => {
             const featured = i === 1;
@@ -265,7 +287,7 @@ export function FinalCta({ t }: { t: Copy }) {
   return (
     <section className="bg-black py-20 md:py-32">
       <div className={wrap}>
-        <div className="relative overflow-hidden rounded-[2rem] bg-neutral-900 px-8 py-16 md:py-24 text-center border border-white/5">
+        <div className="relative overflow-hidden rounded-[2rem] bg-neutral-900 px-8 md:px-16 py-16 md:py-20 border border-white/5">
           <video
             className="absolute inset-0 w-full h-full object-cover opacity-40"
             autoPlay
@@ -276,13 +298,16 @@ export function FinalCta({ t }: { t: Copy }) {
             aria-hidden="true"
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 to-black/70" />
-          <div className="relative">
-          <h2 className="hero-title text-5xl md:text-8xl font-medium">{t.finalCta.title}</h2>
-          <p className="mx-auto mt-6 max-w-xl text-[15px] leading-snug text-white/70">{t.finalCta.body}</p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a href="#pricing" className={cta}>{t.finalCta.primary}</a>
-            <a href="#faq" className={ctaGhost}>{t.finalCta.secondary}</a>
-          </div>
+          <div className="relative grid gap-12 md:grid-cols-[1.3fr_1fr] md:items-center">
+            <div className="text-center md:text-left">
+              <h2 className="hero-title text-5xl md:text-7xl font-medium">{t.finalCta.title}</h2>
+              <p className="mx-auto md:mx-0 mt-6 max-w-xl text-[15px] leading-snug text-white/70">{t.finalCta.body}</p>
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3">
+                <a href="#pricing" className={cta}>{t.finalCta.primary}</a>
+                <a href="#faq" className={ctaGhost}>{t.finalCta.secondary}</a>
+              </div>
+            </div>
+            <MotionImage {...showcase.consult} href="#pricing" className="mx-auto w-full max-w-sm" />
           </div>
         </div>
       </div>
