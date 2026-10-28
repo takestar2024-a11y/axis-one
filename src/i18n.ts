@@ -5,7 +5,16 @@ export interface Copy {
   cta: string;
   titles: [string, string, string];
   description: string;
-  stats: { startups: string; protectedData: string; downloads: string };
+  stats: { value: string; label: string }[];
+  hud: string[];
+  breach: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    commands: string[];
+    panes: { label: string; status: string; lines: string[]; verdict: string }[];
+    note: string;
+  };
   trust: { label: string; names: string[] };
   problem: { eyebrow: string; title: string; body: string; points: { k: string; v: string }[] };
   features: { eyebrow: string; title: string; items: { title: string; body: string }[] };
@@ -44,28 +53,50 @@ export interface Copy {
 
 export const copy: Record<Lang, Copy> = {
   en: {
-    links: ["platform", "solutions", "company", "support"],
+    links: ["technology", "breach demo", "pricing", "faq"],
     cta: "get started",
-    titles: ["protect", "your", "data"],
+    titles: ["breached?", "still", "sealed"],
     description:
-      "we can guarding your data with utmost care, empowering you with privacy everywhere",
-    stats: {
-      startups: "startups use",
-      protectedData: "gb data was protected",
-      downloads: "downloads",
+      "even data in use stays encrypted inside a hardware vault (tee). security built for the day you get breached.",
+    stats: [
+      { value: "tee", label: "hardware-isolated processing" },
+      { value: "aes-256", label: "encrypted even in use" },
+      { value: "<30s", label: "to block a threat automatically" },
+    ],
+    hud: ["tee attested", "aes-256-gcm", "zero plaintext"],
+    breach: {
+      eyebrow: "breach simulation",
+      title: "they got in. all they saw was ciphertext.",
+      body: "same attacker, same server, same memory dump. on a typical cloud your data spills out in plain text. on securify it never leaves the enclave readable.",
+      commands: ["$ ssh root@prod-app-01", "$ dump-memory --pid 4127 | grep -a customer"],
+      panes: [
+        {
+          label: "typical cloud",
+          status: "plaintext exposed",
+          lines: ['name="taro yamada"', "card=4111-1111-1111-1111", "my_number=1234-5678-9018", "email=taro@example.co.jp"],
+          verdict: "! 4 sensitive records leaked",
+        },
+        {
+          label: "securify (processed inside tee)",
+          status: "ciphertext only",
+          lines: ["9f3c a17e 0bd4 52e1 c8f0 3a6b", "e27d 5c19 b3aa 0f84 71de 26c5", "4b80 d9e3 1f6a ac27 58b1 e04c", "c3f2 08ad 7e95 b641 2d0f 9a73"],
+          verdict: "✓ memory is sev-encrypted. nothing readable",
+        },
+      ],
+      note: "illustrative simulation for explanation purposes.",
     },
     trust: {
       label: "trusted by security-minded teams",
       names: ["northwind", "lumio", "atlas&co", "keystone", "orbital", "fernhill"],
     },
     problem: {
-      eyebrow: "the problem",
-      title: "your data moves faster than your security",
-      body: "every new tool, teammate and integration is another door left open. most breaches start with something small nobody noticed.",
+      eyebrow: "the threat",
+      title: "ai attacks in seconds.",
+      body: "finding a hole, getting in, escalating and taking the data used to take attackers days or weeks. ai now does it in minutes or seconds. stopping 100% at the perimeter is no longer a plan.",
       points: [
-        { k: "277 days", v: "average time to spot and contain a breach" },
-        { k: "83%", v: "of companies have suffered more than one breach" },
-        { k: "1 in 3", v: "leaks come from a forgotten account or file" },
+        { k: "weeks", v: "how long a classic attack used to take" },
+        { k: "seconds", v: "how long an ai-driven attack takes" },
+        { k: "assume breach", v: "where modern security has to start" },
       ],
     },
     features: {
@@ -167,9 +198,9 @@ export const copy: Record<Lang, Copy> = {
       ],
     },
     finalCta: {
-      title: "protect your data today",
-      body: "join 65,000+ startups that chose privacy by default. start free, upgrade when you're ready.",
-      primary: "get started",
+      title: "assume breach. stay sealed.",
+      body: "perimeters can't keep up with ai-speed attacks. encrypt data even while it's processed, so a breach never becomes a leak.",
+      primary: "book a demo",
       secondary: "talk to sales",
     },
     footer: {
@@ -183,28 +214,50 @@ export const copy: Record<Lang, Copy> = {
     },
   },
   ja: {
-    links: ["プラットフォーム", "ソリューション", "会社情報", "サポート"],
+    links: ["テクノロジー", "侵入デモ", "料金", "よくある質問"],
     cta: "はじめる",
-    titles: ["あなたの", "データを", "守る"],
+    titles: ["侵入されても", "データは", "見せない"],
     description:
-      "大切なデータを細心の注意で守り、どこにいてもプライバシーを確保します",
-    stats: {
-      startups: "社のスタートアップが利用",
-      protectedData: "gbのデータを保護",
-      downloads: "ダウンロード",
+      "処理中のデータも、ハードウェアの金庫（TEE）で暗号化したまま。侵入前提で守り抜く。",
+    stats: [
+      { value: "TEE", label: "ハードウェアで隔離して処理" },
+      { value: "AES-256", label: "処理中も暗号化したまま" },
+      { value: "<30s", label: "脅威を自動で遮断" },
+    ],
+    hud: ["TEE ATTESTED", "AES-256-GCM", "ZERO PLAINTEXT"],
+    breach: {
+      eyebrow: "侵入シミュレーション",
+      title: "侵入されても、見えるのは暗号だけ。",
+      body: "同じ攻撃者が、同じサーバーに入り、同じようにメモリを盗み見る。一般的なクラウドでは機密データが平文で流れ出し、securify では読める情報が何ひとつ出てきません。",
+      commands: ["$ ssh root@prod-app-01", "$ dump-memory --pid 4127 | grep -a customer"],
+      panes: [
+        {
+          label: "一般的なクラウド",
+          status: "平文が露出",
+          lines: ['name="山田 太郎"', "card=4111-1111-1111-1111", "my_number=1234-5678-9018", "email=taro@example.co.jp"],
+          verdict: "! 機密データ 4件 流出",
+        },
+        {
+          label: "securify（TEE 内で処理）",
+          status: "暗号文のみ",
+          lines: ["9f3c a17e 0bd4 52e1 c8f0 3a6b", "e27d 5c19 b3aa 0f84 71de 26c5", "4b80 d9e3 1f6a ac27 58b1 e04c", "c3f2 08ad 7e95 b641 2d0f 9a73"],
+          verdict: "✓ メモリは暗号化済み。読める情報なし",
+        },
+      ],
+      note: "説明用のシミュレーションです。",
     },
     trust: {
       label: "セキュリティ意識の高いチームが導入しています",
       names: ["northwind", "lumio", "atlas&co", "keystone", "orbital", "fernhill"],
     },
     problem: {
-      eyebrow: "課題",
-      title: "データの増えるスピードに、セキュリティが追いついていない",
-      body: "新しいツール、新しいメンバー、新しい連携。そのたびに入口が増えます。情報漏えいの多くは、誰も気づかない小さな見落としから始まります。",
+      eyebrow: "脅威の変化",
+      title: "AI は、数秒で攻めてくる。",
+      body: "脆弱性の発見、侵入、権限の奪取、データの持ち出し。かつて数日から数週間かかった攻撃を、AI は数分から数秒でやり遂げます。境界で100%防ぐという前提は、もう成り立ちません。",
       points: [
-        { k: "277日", v: "侵害を発見し封じ込めるまでの平均日数" },
-        { k: "83%", v: "複数回の侵害を経験している企業の割合" },
-        { k: "3件に1件", v: "使われなくなったアカウントやファイルが原因" },
+        { k: "数週間", v: "従来の攻撃にかかっていた時間" },
+        { k: "数秒", v: "AI 主導の攻撃にかかる時間" },
+        { k: "侵入前提", v: "これからのセキュリティの出発点" },
       ],
     },
     features: {
@@ -306,9 +359,9 @@ export const copy: Record<Lang, Copy> = {
       ],
     },
     finalCta: {
-      title: "今日から、データを守ろう",
-      body: "プライバシーを標準にした65,000社以上のスタートアップの仲間入りを。無料で始めて、必要になったらアップグレードできます。",
-      primary: "はじめる",
+      title: "侵入前提で、守り抜く。",
+      body: "AI の速度で来る攻撃に、境界の防御だけでは間に合いません。処理中のデータまで暗号化して、侵入を「漏えい」にさせない備えを。",
+      primary: "デモを予約する",
       secondary: "営業に相談する",
     },
     footer: {

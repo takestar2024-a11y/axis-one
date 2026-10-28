@@ -4,7 +4,7 @@ import MotionImage from "./MotionImage";
 import { showcase } from "../showcase";
 
 const wrap = "mx-auto w-full max-w-6xl px-6 md:px-10";
-const eyebrow = "text-xs md:text-sm text-white/70 mb-4";
+const eyebrow = "eyebrow";
 const h2 = "hero-title text-4xl md:text-6xl font-medium max-w-3xl";
 const cta =
   "inline-flex items-center justify-center bg-white text-black text-sm font-normal rounded-full px-6 py-3 hover:bg-neutral-200 transition-colors";
@@ -89,8 +89,8 @@ export function Confidential({ t }: { t: Copy }) {
     <section id="confidential" className="bg-black py-20 md:py-32">
       <div className={wrap}>
         <div className="flex items-center gap-3 mb-4">
-          <p className="text-xs md:text-sm text-white/70">{c.eyebrow}</p>
-          <span className="text-xs border border-white/40 rounded-full px-3 py-1">{c.badge}</span>
+          <p className="eyebrow !mb-0">{c.eyebrow}</p>
+          <span className="font-mono text-[11px] border border-sky-400/50 text-sky-300 rounded-full px-3 py-1">{c.badge}</span>
         </div>
         <h2 className={h2}>{c.title}</h2>
         <p className="mt-6 max-w-2xl text-[15px] leading-snug text-white/90">{c.body}</p>

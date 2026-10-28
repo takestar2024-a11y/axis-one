@@ -13,7 +13,7 @@ body,
 }
 
 body {
-  font-family: 'Readex Pro', 'Noto Sans JP', system-ui, -apple-system, sans-serif;
+  font-family: 'Noto Sans JP Variable', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic', Meiryo, system-ui, sans-serif;
   background: #000;
   color: #fff;
   -webkit-font-smoothing: antialiased;
@@ -95,6 +95,70 @@ html[lang='ja'] p {
   }
   .motion-frame.is-visible .motion-zoom,
   .motion-frame.is-visible .motion-sheen {
+    animation: none;
+  }
+}
+
+/* Cyber accents */
+.eyebrow {
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: rgb(125 211 252); /* sky-300 */
+  margin-bottom: 1rem;
+}
+
+.eyebrow::before {
+  content: '// ';
+  font-family: 'JetBrains Mono', monospace;
+  color: rgb(255 255 255 / 0.4);
+}
+
+.hud-grid {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+.hud-scan {
+  height: 120px;
+  background: linear-gradient(to bottom, transparent, rgb(56 189 248 / 0.12) 85%, rgb(56 189 248 / 0.6));
+  animation: scan 7s linear infinite;
+}
+
+@keyframes scan {
+  from {
+    transform: translateY(-120px);
+  }
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+.hud-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.terminal-caret {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.1em;
+  vertical-align: text-bottom;
+  background: rgb(255 255 255 / 0.7);
+  animation: pulse-dot 1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-scan,
+  .hud-dot,
+  .terminal-caret {
     animation: none;
   }
 }

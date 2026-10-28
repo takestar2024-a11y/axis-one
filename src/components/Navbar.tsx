@@ -1,6 +1,6 @@
 import type { Copy } from "../i18n";
 
-const hrefs = ["#features", "#how", "#pricing", "#faq"];
+const hrefs = ["#confidential", "#breach", "#pricing", "#faq"];
 
 function Logo() {
   return (
