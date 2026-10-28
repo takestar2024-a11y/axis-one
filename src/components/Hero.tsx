@@ -12,8 +12,6 @@ const VIDEO_SRC =
 
 export const VIDEO = VIDEO_SRC;
 
-const titleBase = "hero-title absolute text-white font-medium text-[14vw] md:text-[13vw]";
-
 export default function Hero() {
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -21,7 +19,7 @@ export default function Hero() {
 
   return (
     <>
-    <section className="relative h-screen w-full overflow-hidden bg-black">
+    <section className="relative min-h-screen w-full overflow-hidden bg-black">
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(255,255,255,0.16),transparent_55%),radial-gradient(ellipse_at_20%_80%,rgba(255,255,255,0.08),transparent_50%)]"
@@ -38,20 +36,15 @@ export default function Hero() {
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="hud-scan absolute left-0 right-0 top-0" />
       </div>
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-b from-transparent to-black" />
 
       <Navbar copy={t} />
 
-      <div className="relative h-full w-full">
-        <h1 className={`${titleBase} left-4 md:left-10 top-[24%] md:top-[18%]`}>{t.titles[0]}</h1>
-        <h1 className={`${titleBase} right-4 md:right-10 top-[38%]`}>{t.titles[1]}</h1>
-        <h1 className={`${titleBase} left-[18%] md:left-[28%] top-[58%]`}>{t.titles[2]}</h1>
-
-        <p className="absolute left-6 md:left-10 top-[46%] max-w-[280px] text-[15px] leading-snug text-white/90">
-          {t.description}
-        </p>
-
+      {/* Flow layout: every block takes its own space, so nothing can overlap
+          at any viewport shape. The title is capped by viewport height too. */}
+      <div className="relative flex min-h-screen w-full flex-col px-4 md:px-10 pt-28 pb-6 md:pb-8">
         {/* top-right stat */}
-        <div className="absolute right-6 md:right-24 top-[14%]">
+        <div className="self-end md:mr-14">
           <div className="flex items-center gap-3 justify-end">
             <div className="hidden md:block h-px w-24 bg-white/40 rotate-[20deg]" />
             <span className="text-4xl md:text-5xl font-medium tracking-tight">{t.stats[0].value}</span>
@@ -59,28 +52,41 @@ export default function Hero() {
           <p className="text-xs md:text-sm text-white/70 mt-1 text-right">{t.stats[0].label}</p>
         </div>
 
-        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-b from-transparent to-black" />
+        <h1 className="hero-title mt-4 md:mt-2 font-medium text-white text-[length:min(14vw,12vh)] md:text-[length:min(13vw,14vh)]">
+          <span className="block">{t.titles[0]}</span>
+          <span className="flex items-end justify-between gap-6">
+            <span className="hidden md:block max-w-[240px] lg:max-w-[300px] pb-[0.4em] text-[15px] leading-snug tracking-normal text-white/90">
+              {t.description}
+            </span>
+            <span className="ml-auto">{t.titles[1]}</span>
+          </span>
+          <span className="block pl-[14%] md:pl-[24%]">{t.titles[2]}</span>
+        </h1>
 
-        {/* bottom-left stat */}
-        <div className="absolute left-6 md:left-20 bottom-20 md:bottom-24">
-          <div className="flex items-center gap-3">
-            <span className="text-4xl md:text-5xl font-medium tracking-tight">{t.stats[1].value}</span>
-            <div className="hidden md:block h-px w-24 bg-white/40 rotate-[-20deg]" />
-          </div>
-          <p className="text-xs md:text-sm text-white/70 mt-1">{t.stats[1].label}</p>
-        </div>
+        <p className="md:hidden mt-6 max-w-[320px] text-[15px] leading-snug text-white/90">{t.description}</p>
 
-        {/* bottom-right stat */}
-        <div className="absolute right-6 md:right-20 bottom-16 md:bottom-20">
-          <div className="flex items-center gap-3 justify-end">
-            <div className="hidden md:block h-px w-24 bg-white/40 rotate-[-20deg]" />
-            <span className="text-4xl md:text-5xl font-medium tracking-tight">{t.stats[2].value}</span>
+        <div className="mt-auto pt-10 flex items-end justify-between gap-6 md:px-10">
+          {/* bottom-left stat */}
+          <div>
+            <div className="flex items-center gap-3">
+              <span className="text-4xl md:text-5xl font-medium tracking-tight">{t.stats[1].value}</span>
+              <div className="hidden md:block h-px w-24 bg-white/40 rotate-[-20deg]" />
+            </div>
+            <p className="text-xs md:text-sm text-white/70 mt-1">{t.stats[1].label}</p>
           </div>
-          <p className="text-xs md:text-sm text-white/70 mt-1 text-right">{t.stats[2].label}</p>
+
+          {/* bottom-right stat */}
+          <div className="md:mb-4">
+            <div className="flex items-center gap-3 justify-end">
+              <div className="hidden md:block h-px w-24 bg-white/40 rotate-[-20deg]" />
+              <span className="text-4xl md:text-5xl font-medium tracking-tight">{t.stats[2].value}</span>
+            </div>
+            <p className="text-xs md:text-sm text-white/70 mt-1 text-right">{t.stats[2].label}</p>
+          </div>
         </div>
 
         {/* status readout */}
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-5 md:bottom-8 flex items-center gap-2 md:gap-3 whitespace-nowrap rounded-full border border-sky-400/30 bg-black/60 backdrop-blur px-4 py-2 font-mono text-[10px] md:text-xs text-sky-300">
+        <div className="mt-6 self-center flex items-center gap-2 md:gap-3 whitespace-nowrap rounded-full border border-sky-400/30 bg-black/60 backdrop-blur px-4 py-2 font-mono text-[10px] md:text-xs text-sky-300">
           <span className="hud-dot h-1.5 w-1.5 rounded-full bg-sky-400" aria-hidden="true" />
           {t.hud.map((h, i) => (
             <span key={h} className={i === 0 ? "" : "before:content-['/'] before:mr-2 md:before:mr-3 before:text-white/30"}>
