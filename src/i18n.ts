@@ -126,23 +126,23 @@ export const copy: Record<Lang, Copy> = {
     pricing: {
       eyebrow: "pricing",
       title: "simple plans that scale with you",
-      note: "all plans include a 14-day free trial. no credit card required.",
+      note: "prices exclude tax. annual billing gets 2 months free. starter and business include a 14-day free trial.",
       popular: "most popular",
       plans: [
         {
           name: "starter",
-          price: "$29",
+          price: "$390",
           unit: "/ month",
           body: "for small teams getting security right from day one.",
-          items: ["up to 10 users", "encryption & access control", "basic audit logs", "email support"],
+          items: ["up to 30 users", "encryption & access control", "basic audit logs", "email support"],
           cta: "start free trial",
         },
         {
           name: "business",
-          price: "$99",
+          price: "$1,490",
           unit: "/ month",
           body: "for growing companies that need to prove compliance.",
-          items: ["up to 100 users", "real-time threat detection", "automated compliance reports", "sso & mfa", "priority support"],
+          items: ["up to 300 users", "real-time threat detection", "automated compliance reports", "sso & mfa", "priority support"],
           cta: "start free trial",
         },
         {
@@ -163,7 +163,7 @@ export const copy: Record<Lang, Copy> = {
         { q: "how long does setup take?", a: "most teams are connected and scanned within ten minutes. no agents or downtime required." },
         { q: "which standards do you help with?", a: "soc 2, iso 27001, gdpr and hipaa. reports are generated continuously and export in one click." },
         { q: "can i cancel any time?", a: "yes. there are no contracts on starter and business. cancel from your dashboard whenever you like." },
-        { q: "is there a free trial?", a: "every plan starts with a 14-day free trial and no credit card." },
+        { q: "is there a free trial?", a: "starter and business come with a 14-day free trial. for enterprise, we run a proof of concept with your team." },
       ],
     },
     finalCta: {
@@ -265,23 +265,23 @@ export const copy: Record<Lang, Copy> = {
     pricing: {
       eyebrow: "料金",
       title: "成長に合わせて選べる、シンプルな料金",
-      note: "すべてのプランに14日間の無料トライアル付き。クレジットカードは不要です。",
+      note: "価格は税抜です。年間契約なら2か月分無料。スターターとビジネスは14日間の無料トライアル付き。",
       popular: "人気no.1",
       plans: [
         {
           name: "スターター",
-          price: "¥3,900",
+          price: "¥49,800",
           unit: "/ 月",
           body: "初日から正しくセキュリティを整えたい小規模チーム向け。",
-          items: ["最大10ユーザー", "暗号化・アクセス制御", "基本の監査ログ", "メールサポート"],
+          items: ["最大30ユーザー", "暗号化・アクセス制御", "基本の監査ログ", "メールサポート"],
           cta: "無料で試す",
         },
         {
           name: "ビジネス",
-          price: "¥12,800",
+          price: "¥198,000",
           unit: "/ 月",
           body: "成長中で、コンプライアンスの証明が必要な企業向け。",
-          items: ["最大100ユーザー", "リアルタイム脅威検知", "コンプライアンスレポート自動生成", "sso・mfa", "優先サポート"],
+          items: ["最大300ユーザー", "リアルタイム脅威検知", "コンプライアンスレポート自動生成", "sso・mfa", "優先サポート"],
           cta: "無料で試す",
         },
         {
@@ -302,7 +302,7 @@ export const copy: Record<Lang, Copy> = {
         { q: "導入にどのくらいかかりますか？", a: "ほとんどのチームが10分以内に接続とスキャンまで完了します。エージェントのインストールやダウンタイムは不要です。" },
         { q: "どの基準に対応していますか？", a: "soc 2、iso 27001、gdpr、hipaa に対応。レポートは常時生成され、ワンクリックで出力できます。" },
         { q: "いつでも解約できますか？", a: "はい。スターターとビジネスに契約期間の縛りはありません。ダッシュボードからいつでも解約できます。" },
-        { q: "無料トライアルはありますか？", a: "すべてのプランで14日間の無料トライアルをご利用いただけます。クレジットカードは不要です。" },
+        { q: "無料トライアルはありますか？", a: "スターターとビジネスは14日間の無料トライアルをご利用いただけます。エンタープライズは、貴社環境での実証（PoC）からご相談ください。" },
       ],
     },
     finalCta: {
