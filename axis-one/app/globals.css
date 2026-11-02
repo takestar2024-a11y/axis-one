@@ -179,10 +179,10 @@ html[lang="ja"] .shift-lead{font-family:var(--f-jp);font-weight:700;line-height:
 }
 .nav-mark i,.wordmark i{font-style:normal;color:var(--gold)}
 
-/* the mark — a crosshair in a ring; see components/Logo.tsx */
-.axis-mark{flex:0 0 auto;display:block;overflow:visible}
-.nav-mark .axis-mark,.foot-grid h4 .axis-mark{transition:transform .7s var(--ease)}
-.nav-mark:hover .axis-mark{transform:rotate(90deg)}
+/* the mark — the brand logo; see components/Logo.tsx */
+.axis-mark{flex:0 0 auto;display:block;width:auto;height:auto}
+.nav-mark .axis-mark{transition:transform .7s var(--ease),filter .7s var(--ease)}
+.nav-mark:hover .axis-mark{transform:translateY(-2px);filter:brightness(1.18)}
 .wordmark{display:inline-block}
 .nav-links{display:flex;gap:clamp(1.2rem,2.6vw,2.6rem);align-items:center}
 .nav-links a{font-size:var(--t-micro);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2);position:relative;padding:.4rem 0}
@@ -323,7 +323,8 @@ html[lang="ja"] .shift-lead{font-family:var(--f-jp);font-weight:700;line-height:
   border-top:1px solid var(--hair);
 }
 .row:last-child{border-bottom:1px solid var(--hair)}
-.row-in{display:flex;align-items:center;gap:clamp(1rem,4vw,3.5rem);position:relative}
+.row-in{display:flex;align-items:flex-start;gap:clamp(1rem,4vw,3.5rem);position:relative}
+.row-body{display:flex;flex-direction:column;gap:.55rem;min-width:0;flex:1 1 auto}
 .row .num{
   font-family:var(--f-display);font-weight:800;line-height:.8;
   font-size:clamp(2.6rem,8vw,8rem);
@@ -337,37 +338,32 @@ html[lang="ja"] .shift-lead{font-family:var(--f-jp);font-weight:700;line-height:
   transition:transform .9s var(--ease),color .8s var(--ease);
   color:rgba(255,255,255,.72);
 }
-/* A fixed name track above 768px, so the prices land in one column across
-   all four rows — a ladder is only scannable if the figures line up. */
-@media (min-width:769px){
-  .row .name{flex:0 0 auto;width:clamp(15rem,34vw,32rem)}
+/* the English name of the business, set under the Japanese one */
+.row .en{
+  font-size:var(--t-micro);letter-spacing:.34em;text-transform:uppercase;
+  color:var(--ink-3);transition:color .8s var(--ease);
 }
-/* price and term, set beside the name — the figure is the point, so it is
-   typed in the display face rather than tucked into the description */
-.row .terms{
-  display:flex;flex-direction:column;gap:.35rem;flex:0 0 auto;
-  transition:transform .9s var(--ease);
-}
-.row .terms b{
-  font-family:var(--f-display);font-weight:700;
-  font-size:clamp(.95rem,1.5vw,1.4rem);letter-spacing:-.01em;
-  color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums;
-  transition:color .8s var(--ease);
-}
-.row .terms i{
-  font-style:normal;font-size:var(--t-micro);letter-spacing:.2em;
-  text-transform:uppercase;color:var(--ink-3);white-space:nowrap;
-}
-html[lang="ja"] .row .terms i{text-transform:none;letter-spacing:.12em}
 .row .desc{
-  margin-left:auto;max-width:34ch;color:var(--ink-3);font-size:clamp(.8rem,.95vw,1rem);
-  opacity:0;transform:translateX(24px);transition:opacity .8s var(--ease),transform .9s var(--ease);
+  /* em, not ch: the ch unit is half an em in Japanese, which would cut the
+     measure in half the moment the page switches language. */
+  max-width:46em;color:var(--ink-3);font-size:clamp(.8rem,.95vw,1rem);line-height:1.9;
+  margin-top:.5rem;
+  opacity:0;transform:translateY(10px);transition:opacity .8s var(--ease),transform .9s var(--ease);
 }
+/* what the business actually delivers, named in three words */
+.row .chips{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:.9rem;
+  opacity:0;transform:translateY(10px);transition:opacity .8s var(--ease) .08s,transform .9s var(--ease) .08s;
+}
+.row .chips i{
+  font-style:normal;border:1px solid var(--hair);border-radius:100px;
+  padding:.5rem 1.05rem;font-size:var(--t-micro);letter-spacing:.14em;color:var(--ink-2);
+  transition:border-color .6s var(--ease),color .6s var(--ease);
+}
+.row:hover .chips i{border-color:rgba(201,162,39,.45);color:var(--gold-soft)}
 .row.on .num{color:rgba(201,162,39,.14);-webkit-text-stroke-color:var(--gold)}
 .row.on .name{color:#fff;transform:translateX(clamp(.5rem,1.6vw,1.6rem))}
-.row.on .terms{transform:translateX(clamp(.5rem,1.6vw,1.6rem))}
-.row.on .terms b{color:var(--gold-soft)}
-.row.on .desc{opacity:1;transform:translateX(0)}
+.row.on .en{color:var(--gold-soft)}
+.row.on .desc,.row.on .chips{opacity:1;transform:translateY(0)}
 
 /* ---------- 09  scene 05 selected work ---------- */
 .work{position:relative;background:var(--bg)}
@@ -527,8 +523,8 @@ html[lang="ja"] .card .frame .rec{letter-spacing:.16em}
   .axis{height:280vh}
   .philo{height:280vh}
   .row-in{flex-wrap:wrap;gap:.9rem 1.2rem}
-  .row .terms{flex-basis:100%;flex-direction:row;align-items:baseline;gap:.8rem}
-  .row .desc{margin-left:0;flex-basis:100%;opacity:1;transform:none;max-width:100%;font-size:.85rem}
+  .row .desc{opacity:1;transform:none;max-width:100%;font-size:.85rem}
+  .row .chips{opacity:1;transform:none}
   .row .num{font-size:clamp(2.2rem,13vw,4rem)}
   .work-pin{height:auto;overflow:visible}
   .work-track{flex-direction:column;align-items:stretch;gap:clamp(3rem,10vh,5rem);padding:clamp(5rem,14vh,8rem) var(--gut);transform:none !important}
@@ -566,6 +562,8 @@ html[lang="ja"] .card .tags,
 html[lang="ja"] .hero-foot span{text-transform:none;letter-spacing:.12em}
 html[lang="ja"] .lead{line-height:1.95;max-width:34ch;letter-spacing:.02em}
 html[lang="ja"] .row .name{font-family:var(--f-jp);font-weight:900;text-transform:none;letter-spacing:-.01em}
+html[lang="ja"] .row .desc{max-width:40em;line-height:2}
+html[lang="ja"] .row .en,html[lang="ja"] .row .chips i{letter-spacing:.14em}
 html[lang="ja"] .card h3,
 html[lang="ja"] .build-head h2,
 html[lang="ja"] .work-intro h2,

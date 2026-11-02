@@ -29,7 +29,7 @@ type Entry = { en: ReactNode; ja: ReactNode };
 export const COPY = {
   "nav.shift": { en: "Shift", ja: "変化" },
   "nav.axis": { en: "Axis", ja: "軸" },
-  "nav.build": { en: "Engagements", ja: "商品" },
+  "nav.build": { en: "Business", ja: "事業" },
   "nav.work": { en: "Builds", ja: "制作例" },
   "nav.philosophy": { en: "Philosophy", ja: "思想" },
   "nav.cta": { en: "Start a project", ja: "相談する" },
@@ -118,43 +118,51 @@ export const COPY = {
   "axis.metaLeft": { en: "Fig. 03 — The Axis", ja: "図 03 — 軸" },
   "axis.metaRight": { en: "Structure before speed", ja: "速さより、構造を" },
 
-  "build.title": { en: "Start with the diagnosis.", ja: "まず、診断から。" },
+  "build.title": { en: "Four businesses, one axis.", ja: "4つの事業、ひとつの軸。" },
   "build.lead": {
-    en: "This is not training. Four steps in order, each one earning the next — and the last one leaves AI producing revenue inside your company, not inside a workshop.",
-    ja: "研修では終わりません。4つの段階を順番に。前の段階が次を決め、最後には御社のなかでAIが売上をつくり続けている状態まで持っていきます。",
+    en: "Advisory holds the judgement, automation runs the execution, the funnel turns it into revenue, film widens the world. The four are not separate services — they are one system, reused on a shared foundation.",
+    ja: "顧問として判断を支え、自動化で実行を回し、導線で売上につなげ、動画で世界観を広げる。4事業は別々ではなく、共通の基盤の上で再利用される一つの仕組みです。",
   },
 
-  "build.1.name": { en: "AI Diagnosis", ja: "AI経営診断" },
-  "build.1.price": { en: "¥198,000", ja: "¥198,000" },
-  "build.1.terms": { en: "90-minute session", ja: "90分・単発" },
-  "build.1.desc": {
-    en: "Ninety minutes with the people who decide. You leave with the work broken down, the hours AI can take back, and the order to build in.",
-    ja: "90分のヒアリングから業務・集客・営業を分解し、AI化できる箇所、取り戻せる時間、着手する順番をロードマップにして納品します。",
+  "biz.1.name": { en: "AI Advisory", ja: "AI顧問" },
+  "biz.1.en": { en: "AI Advisory", ja: "AI ADVISORY" },
+  "biz.1.desc": {
+    en: "An axis for the decisions. From “what do we use it for” to “does it survive the floor” — strategy, workflow design and adoption, held over time. We set the axis of the business before anyone picks a tool.",
+    ja: "経営に、AIの判断軸を。「何に使うか」から「現場で回るか」まで、導入戦略・業務設計・定着を伴走する継続支援です。ツール選定の前に、事業の軸を一緒に定めます。",
   },
+  "biz.1.tag1": { en: "Strategy", ja: "導入戦略" },
+  "biz.1.tag2": { en: "Workflow design", ja: "業務設計" },
+  "biz.1.tag3": { en: "Adoption", ja: "定着支援" },
 
-  "build.2.name": { en: "AI Build", ja: "AI実装" },
-  "build.2.price": { en: "From ¥980,000", ja: "¥980,000〜" },
-  "build.2.terms": { en: "3 months", ja: "3ヶ月" },
-  "build.2.desc": {
-    en: "We build what the diagnosis found — sales, marketing, content or back-office — in the order that moves your number first.",
-    ja: "診断で決めた仕組みを実際に作って動かします。AI営業・マーケティング・コンテンツ・業務自動化から、御社の数字に効く順に。",
+  "biz.2.name": { en: "SNS Automation", ja: "SNS自動化" },
+  "biz.2.en": { en: "SNS Automation", ja: "SNS AUTOMATION" },
+  "biz.2.desc": {
+    en: "Posting that does not depend on anyone's willpower. Planning, production, publishing and analysis joined on one foundation, with the shape of what worked kept as an asset rather than a memory.",
+    ja: "運用を、人の頑張りではなく仕組みに。企画から制作・投稿・分析までを一つの基盤に統合し、伸びた投稿の「型」を資産として積み上げる体制をつくります。",
   },
+  "biz.2.tag1": { en: "Post design", ja: "投稿設計" },
+  "biz.2.tag2": { en: "Production", ja: "制作自動化" },
+  "biz.2.tag3": { en: "Analysis", ja: "分析改善" },
 
-  "build.3.name": { en: "AI Growth OS", ja: "AI Growth OS" },
-  "build.3.price": { en: "On request", ja: "応相談" },
-  "build.3.terms": { en: "3–6 months", ja: "3〜6ヶ月" },
-  "build.3.desc": {
-    en: "Not one tool but the operating system: sales, marketing, operations and the decisions on top, all running on one axis.",
-    ja: "単体のツールではなく、営業・マーケ・業務、そしてその上の経営判断までをひとつの軸につなぐ、会社のOSそのものを構築します。",
+  "biz.3.name": { en: "LP / LINE", ja: "LP・LINE構築" },
+  "biz.3.en": { en: "LP / LINE Development", ja: "LP / LINE DEVELOPMENT" },
+  "biz.3.desc": {
+    en: "From attention to application, on one line. A landing page that holds up for high-value work and a LINE sequence nobody drops out of, designed and built into a path that ends in a conversation.",
+    ja: "集客から申込までを、一本の導線に。高単価の導入案件に耐えるLPと、離脱させないLINEステップを設計・構築し、相談につながる流れを作ります。",
   },
+  "biz.3.tag1": { en: "Landing pages", ja: "LP制作" },
+  "biz.3.tag2": { en: "LINE steps", ja: "LINEステップ" },
+  "biz.3.tag3": { en: "Funnel design", ja: "導線設計" },
 
-  "build.4.name": { en: "AI Partner", ja: "AI経営顧問" },
-  "build.4.price": { en: "¥398,000 / month", ja: "月額 ¥398,000" },
-  "build.4.terms": { en: "6-month minimum", ja: "最低6ヶ月" },
-  "build.4.desc": {
-    en: "Two sessions a month. We keep the system improving — new agents, sharper prompts, the team actually using it, the revenue path tightening.",
-    ja: "月2回の戦略ミーティングで、施策の企画からエージェントの改善、社員の活用支援、売上導線の改善までを継続で持ちます。",
+  "biz.4.name": { en: "AI Video", ja: "AI動画制作" },
+  "biz.4.en": { en: "AI Video Production", ja: "AI VIDEO PRODUCTION" },
+  "biz.4.desc": {
+    en: "A world, produced at volume. An AI production flow at the centre — reels, ads, product films — widening what you sell and what you say without breaking the brand's tone.",
+    ja: "世界観を、動画で量産する。AI制作フローを軸に、リール・広告・商品紹介まで、ブランドのトーンを崩さずに追加販売と発信を広げる制作受託です。",
   },
+  "biz.4.tag1": { en: "Reels", ja: "リール制作" },
+  "biz.4.tag2": { en: "Ad film", ja: "広告動画" },
+  "biz.4.tag3": { en: "World-building", ja: "世界観設計" },
 
   "work.title": {
     en: (
@@ -277,22 +285,10 @@ export const COPY = {
   // 事業内容 — the four domains, in the same order as the engagement ladder
   // above, so the footer states the business and the ladder prices it.
   "foot.business": { en: "What we do", ja: "事業内容" },
-  "foot.biz1": {
-    en: "AI diagnosis & roadmap design",
-    ja: "AI経営診断・ロードマップ設計",
-  },
-  "foot.biz2": {
-    en: "AI implementation & workflow automation",
-    ja: "AI実装・業務自動化",
-  },
-  "foot.biz3": {
-    en: "AI creative production — film, brand, web",
-    ja: "AIクリエイティブ制作（映像・ブランド）",
-  },
-  "foot.biz4": {
-    en: "Ongoing AI advisory for management",
-    ja: "AI経営顧問・継続改善",
-  },
+  "foot.biz1": { en: "AI Advisory", ja: "AI顧問" },
+  "foot.biz2": { en: "SNS Automation", ja: "SNS自動化" },
+  "foot.biz3": { en: "LP / LINE Development", ja: "LP・LINE構築" },
+  "foot.biz4": { en: "AI Video Production", ja: "AI動画制作" },
   "foot.contact": { en: "Contact", ja: "お問い合わせ" },
   "foot.startProject": { en: "Start a project", ja: "プロジェクトを相談する" },
   "foot.workIndex": { en: "Studio builds", ja: "制作例を見る" },

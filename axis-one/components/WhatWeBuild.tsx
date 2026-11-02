@@ -4,23 +4,49 @@ import { openAxisCore } from "@/components/AxisCore";
 import { useLang, type CopyKey } from "@/lib/i18n";
 
 /**
- * Scene 04 — the engagement ladder, each rung lighting its own backdrop plate.
+ * Scene 04 — 事業内容. The four businesses, each lighting its own backdrop
+ * plate.
  *
- * The order is the sales order: nothing below starts before the diagnosis
- * above it, so the numbering carries real sequence, not decoration.
+ * They are numbered in the order the lead says they compound: advisory holds
+ * the judgement, automation runs the execution, the funnel turns it into
+ * revenue, film widens the world. One axis, four surfaces.
  */
 
 const ROWS: Array<{
   n: string;
   name: CopyKey;
-  price: CopyKey;
-  terms: CopyKey;
+  en: CopyKey;
   desc: CopyKey;
+  chips: CopyKey[];
 }> = [
-  { n: "1", name: "build.1.name", price: "build.1.price", terms: "build.1.terms", desc: "build.1.desc" },
-  { n: "2", name: "build.2.name", price: "build.2.price", terms: "build.2.terms", desc: "build.2.desc" },
-  { n: "3", name: "build.3.name", price: "build.3.price", terms: "build.3.terms", desc: "build.3.desc" },
-  { n: "4", name: "build.4.name", price: "build.4.price", terms: "build.4.terms", desc: "build.4.desc" },
+  {
+    n: "1",
+    name: "biz.1.name",
+    en: "biz.1.en",
+    desc: "biz.1.desc",
+    chips: ["biz.1.tag1", "biz.1.tag2", "biz.1.tag3"],
+  },
+  {
+    n: "2",
+    name: "biz.2.name",
+    en: "biz.2.en",
+    desc: "biz.2.desc",
+    chips: ["biz.2.tag1", "biz.2.tag2", "biz.2.tag3"],
+  },
+  {
+    n: "3",
+    name: "biz.3.name",
+    en: "biz.3.en",
+    desc: "biz.3.desc",
+    chips: ["biz.3.tag1", "biz.3.tag2", "biz.3.tag3"],
+  },
+  {
+    n: "4",
+    name: "biz.4.name",
+    en: "biz.4.en",
+    desc: "biz.4.desc",
+    chips: ["biz.4.tag1", "biz.4.tag2", "biz.4.tag3"],
+  },
 ];
 
 export default function WhatWeBuild() {
@@ -38,7 +64,7 @@ export default function WhatWeBuild() {
       <div className="build-list">
         <div className="build-head">
           <h2>{t("build.title")}</h2>
-          <p className="lead" style={{ maxWidth: "34ch" }}>
+          <p className="lead" style={{ maxWidth: "40ch" }}>
             {t("build.lead")}
           </p>
         </div>
@@ -57,12 +83,16 @@ export default function WhatWeBuild() {
           >
             <div className="row-in">
               <span className="num">{`0${row.n}`}</span>
-              <span className="name">{t(row.name)}</span>
-              <span className="terms">
-                <b>{t(row.price)}</b>
-                <i>{t(row.terms)}</i>
+              <span className="row-body">
+                <span className="name">{t(row.name)}</span>
+                <span className="en">{t(row.en)}</span>
+                <span className="desc">{t(row.desc)}</span>
+                <span className="chips">
+                  {row.chips.map((chip) => (
+                    <i key={chip}>{t(chip)}</i>
+                  ))}
+                </span>
               </span>
-              <span className="desc">{t(row.desc)}</span>
             </div>
           </a>
         ))}

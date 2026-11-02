@@ -1,38 +1,38 @@
+import Image from "next/image";
+
 /**
  * AXIS ONE — the mark.
  *
- * A crosshair inside a ring: the axis (gold, vertical and horizontal) and the
- * centre point that the whole site argues for — "you are the axis". The same
- * geometry is the favicon (`app/icon.svg`), so the tab and the header agree.
+ * The artwork is the brand's own logo: the arrow-through-"A" inside the
+ * hexagon. It lives in `public/brand/` as a transparent PNG so the violet and
+ * gold bloom composites on the page's black instead of sitting on a plate.
  *
- * Drawn inline rather than loaded as a file: it is a few hundred bytes, it
- * inherits the page's colour tokens, and it never arrives a frame late.
+ * `size` is the rendered height in pixels; the width follows the artwork's
+ * ratio. The file is 215×247, so anything up to ~110px is still inside its
+ * native resolution.
  */
 
-export function AxisMark({ size = 22 }: { size?: number }) {
+const SRC = "/brand/axis-one-mark.png";
+const NATIVE = { w: 215, h: 247 };
+
+export function AxisMark({ size = 26 }: { size?: number }) {
+  const height = size;
+  const width = Math.round((NATIVE.w / NATIVE.h) * size);
+
   return (
-    <svg
+    <Image
       className="axis-mark"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
+      src={SRC}
+      alt=""
+      width={width}
+      height={height}
+      priority
       aria-hidden="true"
-      focusable="false"
-    >
-      <circle cx="12" cy="12" r="9.25" stroke="var(--purple-neon, #9D4EDD)" strokeOpacity="0.55" />
-      <path
-        d="M12 1.5v21M1.5 12h21"
-        stroke="var(--gold, #C9A227)"
-        strokeWidth="1.1"
-        strokeLinecap="round"
-      />
-      <circle cx="12" cy="12" r="2.1" fill="var(--gold, #C9A227)" />
-    </svg>
+    />
   );
 }
 
-/** The mark plus the wordmark. `as` keeps the heading levels honest. */
+/** The mark plus the wordmark. */
 export default function Logo({ size }: { size?: number }) {
   return (
     <>
