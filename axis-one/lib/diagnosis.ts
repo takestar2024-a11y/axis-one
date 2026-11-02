@@ -1,10 +1,13 @@
 /**
  * AXIS CORE — the free diagnosis.
  *
- * A five-question version of the ¥198,000 AI経営診断, run inside the assistant
- * panel. It exists to do three things at once: demonstrate the product rather
- * than describe it, qualify the visitor, and earn an email by having something
- * worth sending.
+ * A five-question reading, run inside the assistant panel. It exists to do
+ * three things at once: demonstrate the work rather than describe it, qualify
+ * the visitor, and earn an email by having something worth sending.
+ *
+ * The result points at one of the four businesses. Each task below carries the
+ * `domain` it belongs to, so the recommendation is decided by where the
+ * visitor's hours actually sit — not by what we would most like to sell.
  *
  * The arithmetic is deliberately boring and inspectable. Every hour in the
  * result came from the visitor's own answer; the only thing AXIS ONE supplies
@@ -46,9 +49,20 @@ export const INDUSTRIES: readonly Industry[] = [
   { id: "other", label: { ja: "その他", en: "Other" } },
 ];
 
+/**
+ * The four businesses, as the diagnosis refers to them.
+ *   advisory — AI顧問:       judgement, workflow design, adoption
+ *   sns      — SNS自動化:     content produced and published as a system
+ *   funnel   — LP・LINE構築:  the path from attention to a conversation
+ *   video    — AI動画制作:    film produced at volume
+ */
+export type Domain = "advisory" | "sns" | "funnel" | "video";
+
 export interface TaskType {
   id: string;
   label: Record<Lang, string>;
+  /** Which of the four businesses would take this work on. */
+  domain: Domain;
   /**
    * Share of the task a system can take over, leaving a human checkpoint.
    * Higher where the work is transcription and formatting; lower where the
@@ -65,6 +79,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "minutes",
     label: { ja: "議事録の作成", en: "Meeting minutes" },
+    domain: "advisory",
     automatable: 0.85,
     industries: ["sales", "professional", "creative", "other"],
     note: {
@@ -75,6 +90,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "data-entry",
     label: { ja: "データ入力・転記", en: "Data entry and transfer" },
+    domain: "advisory",
     automatable: 0.8,
     industries: ["sales", "professional", "construction", "retail", "other"],
     note: {
@@ -85,6 +101,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "daily-report",
     label: { ja: "日報・報告書の作成", en: "Daily and status reports" },
+    domain: "advisory",
     automatable: 0.75,
     industries: ["construction", "sales", "other"],
     note: {
@@ -95,6 +112,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "inquiry",
     label: { ja: "問い合わせの一次対応", en: "First-line enquiries" },
+    domain: "funnel",
     automatable: 0.7,
     industries: ["professional", "retail", "sales", "other"],
     note: {
@@ -105,6 +123,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "research",
     label: { ja: "営業リスト作成・リサーチ", en: "Prospect lists and research" },
+    domain: "advisory",
     automatable: 0.7,
     industries: ["sales", "creative", "other"],
     note: {
@@ -115,6 +134,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "photo-log",
     label: { ja: "現場写真・記録の整理", en: "Site photos and records" },
+    domain: "advisory",
     automatable: 0.65,
     industries: ["construction"],
     note: {
@@ -125,6 +145,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "quote",
     label: { ja: "見積書・提案書の作成", en: "Quotes and proposals" },
+    domain: "advisory",
     automatable: 0.6,
     industries: ["sales", "construction", "professional"],
     note: {
@@ -135,6 +156,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "content",
     label: { ja: "SNS・コンテンツ制作", en: "Social and content production" },
+    domain: "sns",
     automatable: 0.6,
     industries: ["creative", "retail", "other"],
     note: {
@@ -143,8 +165,20 @@ export const TASKS: readonly TaskType[] = [
     },
   },
   {
+    id: "video",
+    label: { ja: "動画・リールの制作", en: "Video and reels" },
+    domain: "video",
+    automatable: 0.6,
+    industries: ["creative", "retail", "sales", "other"],
+    note: {
+      ja: "台本から編集・書き出しまでの量産工程は任せられます。何を撮るかの企画は残ります。",
+      en: "Script through to edit and export can run as a pipeline; deciding what to shoot cannot.",
+    },
+  },
+  {
     id: "recruiting",
     label: { ja: "求人原稿・採用対応", en: "Job posts and hiring" },
+    domain: "advisory",
     automatable: 0.6,
     industries: ["construction", "retail", "other"],
     note: {
@@ -155,6 +189,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "follow-up",
     label: { ja: "顧客フォロー・追客", en: "Customer follow-up" },
+    domain: "funnel",
     automatable: 0.55,
     industries: ["sales", "retail"],
     note: {
@@ -165,6 +200,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "deck",
     label: { ja: "資料・スライド作成", en: "Decks and documents" },
+    domain: "advisory",
     automatable: 0.5,
     industries: ["sales", "creative", "professional", "other"],
     note: {
@@ -175,6 +211,7 @@ export const TASKS: readonly TaskType[] = [
   {
     id: "accounting",
     label: { ja: "請求・経理処理", en: "Invoicing and bookkeeping" },
+    domain: "advisory",
     automatable: 0.5,
     industries: ["professional", "retail", "construction", "other"],
     note: {
@@ -227,8 +264,8 @@ export interface ResultLine {
   savedHigh: number;
 }
 
-/** Which rung of the engagement ladder the reading points at. */
-export type Recommendation = "not-yet" | "diagnosis" | "build" | "growth-os" | "partner";
+/** Which of the four businesses the reading points at — or none of them. */
+export type Recommendation = "not-yet" | Domain;
 
 export interface Reading {
   lines: ResultLine[];
@@ -253,19 +290,53 @@ function round(hours: number): number {
 }
 
 /**
- * Below this, the paid diagnosis does not pay for itself inside a year
- * (hours x HOURLY_RATE x 12 < ¥198,000), so the honest answer is to say so
- * rather than quote a price the numbers cannot carry.
+ * Below this, roughly ¥18,000 a month of capacity is in play. Building a
+ * system around that costs more than it returns for a long time, so the honest
+ * answer is to say so rather than recommend something the numbers cannot carry.
  */
 const TOO_SMALL_HOURS = 6;
 
-function recommend(hoursHigh: number, maturity: MaturityId): Recommendation {
+/** Above this the work is spread too wide to start anywhere but the axis. */
+const NEEDS_THE_AXIS_HOURS = 60;
+
+/** Below this share, no single business holds enough of the hours to lead. */
+const CONCENTRATED = 0.6;
+
+/**
+ * Pick the business from where the hours actually are.
+ *
+ * One domain holding most of the recovered hours gets the recommendation. When
+ * the hours are spread across several, or there are simply a lot of them, or
+ * the company has not started at all and the job is already large, the answer
+ * is AI顧問 — because the first problem in that case is the order to work in,
+ * not the tool.
+ */
+function recommend(
+  lines: ResultLine[],
+  hoursHigh: number,
+  maturity: MaturityId,
+): Recommendation {
   if (hoursHigh < TOO_SMALL_HOURS) return "not-yet";
-  if (maturity === "company" && hoursHigh >= 60) return "growth-os";
-  if (hoursHigh >= 80) return "growth-os";
-  if (hoursHigh >= 30) return "build";
-  if (maturity === "company") return "partner";
-  return "diagnosis";
+  if (hoursHigh >= NEEDS_THE_AXIS_HOURS) return "advisory";
+  if (maturity === "none" && hoursHigh >= 30) return "advisory";
+
+  const byDomain = new Map<Domain, number>();
+  for (const line of lines) {
+    const domain = TASKS.find((task) => task.id === line.taskId)?.domain;
+    if (!domain) continue;
+    byDomain.set(domain, (byDomain.get(domain) ?? 0) + line.savedHigh);
+  }
+
+  let top: Domain = "advisory";
+  let topHours = 0;
+  for (const [domain, hours] of byDomain) {
+    if (hours > topHours) {
+      top = domain;
+      topHours = hours;
+    }
+  }
+
+  return topHours / hoursHigh >= CONCENTRATED ? top : "advisory";
 }
 
 const COPY: Record<Lang, {
@@ -328,7 +399,7 @@ export function readDiagnosis(answers: Answers, lang: Lang): Reading {
     hoursHigh,
     yenLow,
     yenHigh,
-    recommendation: recommend(hoursHigh, answers.maturity),
+    recommendation: recommend(lines, hoursHigh, answers.maturity),
     headline: copy.headline(hoursLow, hoursHigh),
     summary: copy.summary({
       low: hoursLow,
@@ -451,60 +522,80 @@ export const PROMPTS: Record<
   },
 };
 
-/** Where a reading points on the engagement ladder. */
+/**
+ * Which of the four businesses a reading points at.
+ *
+ * No prices here. What an engagement costs depends on what is in it, and
+ * quoting a figure off five questions would be a number we cannot stand behind.
+ */
 export const RECOMMENDED: Record<Recommendation, Record<Lang, { name: string; why: string }>> = {
   "not-yet": {
     ja: {
       name: "いまは、まだ早いです",
       why:
-        "この規模だと、診断費用を回収するのに1年以上かかります。まずは無料のツールで議事録と定型文の作成だけ自動化してみてください。" +
+        "この規模だと、仕組みをつくる手間のほうが戻ってくる時間を上回ります。まずは無料のツールで議事録と定型文の作成だけ自動化してみてください。" +
         "手応えが出て、対象の業務が増えてから、あらためてご相談いただくのが得です。",
     },
     en: {
       name: "Not yet, honestly",
       why:
-        "At this size the diagnosis would take over a year to pay for itself. Start with free tools on your minutes and boilerplate. " +
+        "At this size, building the system costs more than the hours it returns. Start with free tools on your minutes and boilerplate. " +
         "Come back when the list of repeatable work has grown — it will cost you less that way.",
     },
   },
-  diagnosis: {
+  advisory: {
     ja: {
-      name: "AI経営診断（¥198,000）",
-      why: "対象が絞られているので、まず90分で全体を棚卸しし、着手順を決めるのが最短です。",
+      name: "01 AI顧問",
+      why:
+        "時間が複数の業務に散っているか、量そのものが大きい状態です。" +
+        "ここで先にツールを決めると、だいたい入れ替えになります。導入戦略・業務設計・定着まで、着手する順番から一緒に決めるのが最短です。",
     },
     en: {
-      name: "AI Diagnosis (¥198,000)",
-      why: "The scope is contained — ninety minutes to map it properly and decide the order is the fastest route.",
+      name: "01 AI Advisory",
+      why:
+        "The hours are spread across several kinds of work, or there are simply a lot of them. " +
+        "Picking a tool first usually means replacing it later — strategy, workflow design and adoption, starting with the order to work in.",
     },
   },
-  build: {
+  sns: {
     ja: {
-      name: "AI実装（¥980,000〜・3ヶ月）",
-      why: "この規模なら、診断だけで終わらせず実際に仕組みを作るところまで一気に進める価値があります。",
+      name: "02 SNS自動化",
+      why:
+        "時間の大半がコンテンツの制作・投稿に集まっています。企画から投稿・分析までを一つの基盤に載せ、" +
+        "伸びた投稿の「型」を資産として積み上げる形がそのまま効きます。",
     },
     en: {
-      name: "AI Build (from ¥980,000, 3 months)",
-      why: "At this size it is worth going past the diagnosis and building the system itself.",
+      name: "02 SNS Automation",
+      why:
+        "Most of the time sits in producing and publishing content. Planning, production, publishing and analysis on one foundation — " +
+        "with the shape of what worked kept as an asset — maps directly onto this.",
     },
   },
-  "growth-os": {
+  funnel: {
     ja: {
-      name: "AI Growth OS（応相談・3〜6ヶ月）",
-      why: "単体の業務改善では収まりません。営業・業務・判断をまとめて設計する規模です。",
+      name: "03 LP・LINE構築",
+      why:
+        "問い合わせ対応と追客に時間が集まっています。人を増やすより、集客から申込までを一本の導線にして、" +
+        "LPとLINEステップで取りこぼしを止めるほうが先です。",
     },
     en: {
-      name: "AI Growth OS (on request, 3–6 months)",
-      why: "This is past single-task improvement — sales, operations and the decisions on top want designing together.",
+      name: "03 LP / LINE Development",
+      why:
+        "The time is going into enquiries and follow-up. Rather than adding people, put attention-to-application on one line — " +
+        "a landing page and a LINE sequence that stop the drop-off.",
     },
   },
-  partner: {
+  video: {
     ja: {
-      name: "AI経営顧問（月額 ¥398,000）",
-      why: "すでに社内でAIが動いているので、新規構築より継続的な改善のほうが効きます。",
+      name: "04 AI動画制作",
+      why:
+        "時間の大半が映像の制作工程です。AI制作フローを軸に量産体制をつくれば、" +
+        "ブランドのトーンを崩さずに本数を増やせます。",
     },
     en: {
-      name: "AI Partner (¥398,000 / month)",
-      why: "AI is already running inside the company, so continuous improvement beats another build.",
+      name: "04 AI Video Production",
+      why:
+        "Most of the time is production. An AI production flow at the centre raises the count without breaking the brand's tone.",
     },
   },
 };

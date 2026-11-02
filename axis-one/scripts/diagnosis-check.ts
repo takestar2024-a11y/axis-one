@@ -49,6 +49,15 @@ const CASES: Array<{ name: string; answers: Answers }> = [
     },
   },
   {
+    name: "制作・1〜5名・動画の制作工程に集中",
+    answers: {
+      industry: "creative",
+      headcount: "solo",
+      hours: { video: 30, content: 5 },
+      maturity: "individual",
+    },
+  },
+  {
     name: "EC・1〜5名・最小構成",
     answers: {
       industry: "retail",

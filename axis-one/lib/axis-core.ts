@@ -79,8 +79,8 @@ const KB: Knowledge[] = [
       "service", "services", "offer", "what do you do", "build", "できること",
       "サービス", "事業", "何を", "何ができ", "業務",
     ],
-    en: "Axis One builds four things, as one system:\n\n**01 AI Systems** — agents, pipelines and internal tools.\n**02 Creative** — identity, film and interface as one language.\n**03 Automation** — the invisible layer that removes repeat work.\n**04 Growth** — acquisition designed as a measurable system.\n\nMost engagements combine two or three. Which one is closest to your problem?",
-    ja: "AXIS ONE は、4つの領域をひとつの仕組みとして設計します。\n\n**01 AIシステム** — エージェント、パイプライン、社内ツール\n**02 クリエイティブ** — ブランド・映像・インターフェースを同じ言語で\n**03 自動化** — 繰り返し作業を人の手から離す見えない層\n**04 グロース** — 計測できる仕組みとしての集客設計\n\n多くの案件は2〜3領域の組み合わせです。どれが一番近いですか？",
+    en: "Four businesses, one axis:\n\n**01 AI Advisory** — strategy, workflow design and adoption, held over time.\n**02 SNS Automation** — planning, production, publishing and analysis on one foundation.\n**03 LP / LINE Development** — attention to application, on one line.\n**04 AI Video Production** — film produced at volume without breaking the brand's tone.\n\nThey are not separate services — they reuse the same foundation. Which one is closest to your problem?",
+    ja: "4つの事業を、ひとつの軸で設計します。\n\n**01 AI顧問** — 導入戦略・業務設計・定着までを伴走する継続支援\n**02 SNS自動化** — 企画から制作・投稿・分析までを一つの基盤に統合\n**03 LP・LINE構築** — 集客から申込までを一本の導線に\n**04 AI動画制作** — ブランドのトーンを崩さずに映像を量産\n\n4事業は別々ではなく、共通の基盤の上で再利用される一つの仕組みです。どれが一番近いですか？",
   },
   {
     keys: ["ai", "artificial", "agent", "llm", "gpt", "claude", "人工知能", "エージェント", "生成"],
@@ -113,8 +113,8 @@ const KB: Knowledge[] = [
       "price", "cost", "budget", "how much", "fee", "pricing",
       "費用", "料金", "予算", "いくら", "価格", "見積",
     ],
-    en: "Three typical shapes:\n\n**Sprint** — one focused build, 2–4 weeks.\n**Build** — a full system, 2–4 months.\n**Partner** — a monthly retainer where we run and improve the system with you.\n\nExact numbers depend on scope, so we quote after a 30-minute call. Nothing starts without a written scope and a fixed number.",
-    ja: "契約の形は主に3種類です。\n\n**スプリント** — 対象を絞った構築、2〜4週間\n**ビルド** — 仕組み全体の構築、2〜4ヶ月\n**パートナー** — 月額で運用と改善を一緒に回す形\n\n金額は範囲によって変わるため、30分のお打ち合わせのうえでお見積りします。書面のスコープと確定金額なしに着手することはありません。",
+    en: "Any of the four businesses can be taken on its own or combined, and the shape follows: a one-off build, or a monthly engagement where we run and improve it with you.\n\nExact numbers depend on scope, so we quote after a 30-minute call. Nothing starts without a written scope and a fixed number.\n\nIf you want a figure to think with, run the free diagnosis in this panel — it estimates the hours in play from your own numbers.",
+    ja: "4事業は単独でも組み合わせでも承ります。形は、単発の構築か、月額で運用と改善を一緒に回す形のいずれかです。\n\n金額は範囲によって変わるため、30分のお打ち合わせのうえでお見積りします。書面のスコープと確定金額なしに着手することはありません。\n\n目安が欲しい場合は、このパネルの無料AI診断をお試しください。いただいた数字から、対象になる工数を概算します。",
   },
   {
     keys: ["process", "how do you work", "steps", "進め方", "流れ", "プロセス", "どうやって", "手順"],
@@ -192,9 +192,13 @@ export function localAnswer(question: string, lang: Lang): string {
 export function systemPrompt(lang: Lang): string {
   const base =
     "You are AXIS CORE, the assistant embedded in the website of AXIS ONE, a creative growth company in Tokyo. " +
-    "AXIS ONE designs AI systems, creative, automation and growth as one operating system for a business. " +
+    "AXIS ONE runs four businesses on one axis: 01 AI顧問 (AI Advisory — strategy, workflow design, adoption, held over time), " +
+    "02 SNS自動化 (SNS Automation — planning, production, publishing and analysis on one foundation), " +
+    "03 LP・LINE構築 (LP / LINE Development — attention to application on one line), " +
+    "04 AI動画制作 (AI Video Production — film at volume, in the brand's tone). " +
+    "They are not separate services: they reuse a shared foundation, and a client may take one or several. " +
     "Positioning: not an AI vendor and not a web production shop — a partner that designs the structural axis a business runs on. " +
-    "Engagement shapes: Sprint (2-4 weeks), Build (2-4 months), Partner (monthly retainer). " +
+    "There is no published price list. Engagements are quoted after a 30-minute call, against a written scope. " +
     "Process: Diagnose, Design, Build, Run. Contact: hello@axisone.jp, reply within one business day, three new partners per quarter. " +
     "Voice: calm, precise, confident, no hype, no exclamation marks, no emoji. Keep answers under 120 words. " +
     "Never invent specific client names, prices or metrics; if pressed, say it depends on scope and offer a call. " +
