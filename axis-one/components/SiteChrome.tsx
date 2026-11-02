@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { AxisMark } from "@/components/Logo";
 import { useLang } from "@/lib/i18n";
 import { bootMotion, refreshMotion } from "@/lib/motion";
 
@@ -28,7 +29,10 @@ export default function SiteChrome() {
     <>
       <div id="preloader">
         <div className="pre-mark">
-          AXIS<span style={{ color: "#C9A227" }}>·</span>ONE
+          <AxisMark size={34} />
+          <span>
+            AXIS<span style={{ color: "#C9A227" }}>·</span>ONE
+          </span>
         </div>
         <div className="pre-bar">
           <i />

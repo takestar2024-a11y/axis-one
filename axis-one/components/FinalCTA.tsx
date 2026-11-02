@@ -1,6 +1,7 @@
 "use client";
 
 import { openAxisCore } from "@/components/AxisCore";
+import Logo from "@/components/Logo";
 import { useLang } from "@/lib/i18n";
 
 /** Scene 07 — the ask, the marquee, the footer. */
@@ -45,9 +46,17 @@ export default function FinalCTA() {
         <div className="foot-grid">
           <div className="foot-col">
             <h4>
-              AXIS<i>·</i>ONE
+              <Logo size={20} />
             </h4>
             <p style={{ maxWidth: "30ch" }}>{t("foot.about")}</p>
+          </div>
+
+          <div className="foot-col">
+            <div className="foot-label">{t("foot.business")}</div>
+            <p>{t("foot.biz1")}</p>
+            <p>{t("foot.biz2")}</p>
+            <p>{t("foot.biz3")}</p>
+            <p>{t("foot.biz4")}</p>
           </div>
 
           <div className="foot-col">

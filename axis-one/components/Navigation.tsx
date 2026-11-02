@@ -2,6 +2,7 @@
 
 import { useLang, type CopyKey } from "@/lib/i18n";
 import { openAxisCore } from "@/components/AxisCore";
+import Logo from "@/components/Logo";
 
 const LINKS: Array<{ href: string; key: CopyKey }> = [
   { href: "#shift", key: "nav.shift" },
@@ -16,8 +17,8 @@ export default function Navigation() {
 
   return (
     <header className="nav">
-      <a href="#hero" className="nav-mark" data-cursor="TOP">
-        AXIS<i>·</i>ONE
+      <a href="#hero" className="nav-mark" data-cursor="TOP" aria-label="AXIS ONE">
+        <Logo size={20} />
       </a>
 
       <nav className="nav-links">

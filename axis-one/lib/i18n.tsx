@@ -273,6 +273,26 @@ export const COPY = {
     en: "A creative growth company designing AI, creative and automation systems for the next generation of business.",
     ja: "AI・クリエイティブ・自動化を統合し、次の時代のビジネスの仕組みを設計するクリエイティブ・グロース・カンパニー。",
   },
+
+  // 事業内容 — the four domains, in the same order as the engagement ladder
+  // above, so the footer states the business and the ladder prices it.
+  "foot.business": { en: "What we do", ja: "事業内容" },
+  "foot.biz1": {
+    en: "AI diagnosis & roadmap design",
+    ja: "AI経営診断・ロードマップ設計",
+  },
+  "foot.biz2": {
+    en: "AI implementation & workflow automation",
+    ja: "AI実装・業務自動化",
+  },
+  "foot.biz3": {
+    en: "AI creative production — film, brand, web",
+    ja: "AIクリエイティブ制作（映像・ブランド）",
+  },
+  "foot.biz4": {
+    en: "Ongoing AI advisory for management",
+    ja: "AI経営顧問・継続改善",
+  },
   "foot.contact": { en: "Contact", ja: "お問い合わせ" },
   "foot.startProject": { en: "Start a project", ja: "プロジェクトを相談する" },
   "foot.workIndex": { en: "Studio builds", ja: "制作例を見る" },

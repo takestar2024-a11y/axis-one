@@ -125,9 +125,12 @@ html[lang="ja"] .shift-lead{font-family:var(--f-jp);font-weight:700;line-height:
   gap:2.2rem;
 }
 #preloader .pre-mark{
+  display:flex;align-items:center;gap:clamp(.8rem,2vw,1.2rem);
   font-family:var(--f-display);font-weight:700;font-size:clamp(.9rem,1.4vw,1.15rem);
-  letter-spacing:.7em;text-indent:.7em;text-transform:uppercase;opacity:0;
+  text-transform:uppercase;opacity:0;
 }
+/* the tracking belongs to the word, not to the row that also holds the mark */
+#preloader .pre-mark > span{letter-spacing:.7em;text-indent:.7em}
 #preloader .pre-bar{width:min(280px,52vw);height:1px;background:rgba(255,255,255,.12);position:relative;overflow:hidden}
 #preloader .pre-bar i{position:absolute;inset:0;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--purple),var(--gold))}
 #preloader .pre-num{font-size:var(--t-micro);letter-spacing:.3em;color:var(--ink-3);font-variant-numeric:tabular-nums}
@@ -170,10 +173,17 @@ html[lang="ja"] .shift-lead{font-family:var(--f-jp);font-weight:700;line-height:
   border-bottom:1px solid var(--hair);
 }
 .nav-mark{
+  display:inline-flex;align-items:center;gap:.7rem;
   font-family:var(--f-display);font-weight:800;font-size:.9rem;
   letter-spacing:.34em;text-transform:uppercase;
 }
-.nav-mark i{font-style:normal;color:var(--gold)}
+.nav-mark i,.wordmark i{font-style:normal;color:var(--gold)}
+
+/* the mark — a crosshair in a ring; see components/Logo.tsx */
+.axis-mark{flex:0 0 auto;display:block;overflow:visible}
+.nav-mark .axis-mark,.foot-grid h4 .axis-mark{transition:transform .7s var(--ease)}
+.nav-mark:hover .axis-mark{transform:rotate(90deg)}
+.wordmark{display:inline-block}
 .nav-links{display:flex;gap:clamp(1.2rem,2.6vw,2.6rem);align-items:center}
 .nav-links a{font-size:var(--t-micro);letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2);position:relative;padding:.4rem 0}
 .nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform .6s var(--ease)}
@@ -486,8 +496,8 @@ html[lang="ja"] .card .frame .rec{letter-spacing:.16em}
 .marquee-in span:nth-child(even){-webkit-text-stroke-color:rgba(201,162,39,.55)}
 
 .foot{padding:clamp(3.5rem,10vh,7rem) var(--gut) clamp(2rem,5vh,3rem);background:var(--bg)}
-.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:start}
-.foot-grid h4{font-family:var(--f-display);font-weight:800;text-transform:uppercase;letter-spacing:.28em;font-size:.82rem;margin-bottom:1.4rem}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1.35fr .85fr .85fr;gap:clamp(2rem,4vw,3.4rem);align-items:start}
+.foot-grid h4{display:flex;align-items:center;gap:.7rem;font-family:var(--f-display);font-weight:800;text-transform:uppercase;letter-spacing:.28em;font-size:.82rem;margin-bottom:1.4rem}
 .foot-grid h4 i{font-style:normal;color:var(--gold)}
 .foot-col p,.foot-col a{display:block;color:var(--ink-2);font-size:.9rem;line-height:2.1}
 .foot-col a{transition:color .5s var(--ease)}
