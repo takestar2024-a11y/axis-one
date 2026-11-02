@@ -18,7 +18,7 @@ export default function Navigation() {
   return (
     <header className="nav">
       <a href="#hero" className="nav-mark" data-cursor="TOP" aria-label="AXIS ONE">
-        <Logo size={20} />
+        <Logo size={28} />
       </a>
 
       <nav className="nav-links">

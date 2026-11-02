@@ -46,7 +46,7 @@ export default function FinalCTA() {
         <div className="foot-grid">
           <div className="foot-col">
             <h4>
-              <Logo size={20} />
+              <Logo size={26} />
             </h4>
             <p style={{ maxWidth: "30ch" }}>{t("foot.about")}</p>
           </div>

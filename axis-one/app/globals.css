@@ -180,7 +180,9 @@ html[lang="ja"] .shift-lead{font-family:var(--f-jp);font-weight:700;line-height:
 .nav-mark i,.wordmark i{font-style:normal;color:var(--gold)}
 
 /* the mark — the brand logo; see components/Logo.tsx */
-.axis-mark{flex:0 0 auto;display:block;width:auto;height:auto}
+/* no width/height here: the element carries its own, and `auto` would send it
+   back to the file's intrinsic 215px */
+.axis-mark{flex:0 0 auto;display:block}
 .nav-mark .axis-mark{transition:transform .7s var(--ease),filter .7s var(--ease)}
 .nav-mark:hover .axis-mark{transform:translateY(-2px);filter:brightness(1.18)}
 .wordmark{display:inline-block}

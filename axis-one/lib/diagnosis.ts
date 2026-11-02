@@ -471,6 +471,7 @@ export const PROMPTS: Record<
     start: string;
     exit: string;
     disclaimer: string;
+    offline: string;
   }
 > = {
   ja: {
@@ -496,6 +497,8 @@ export const PROMPTS: Record<
     exit: "自由に質問する",
     disclaimer:
       "※ いただいた時間をもとにした概算です。実際の削減幅は業務の中身によって変わります。",
+    offline:
+      "※ この画面は記録用のサーバーに接続されていないため、結果の控えをお送りできません。計算は同じものです。送付をご希望の場合は hello@axisone.jp までご連絡ください。",
   },
   en: {
     intro:
@@ -519,6 +522,8 @@ export const PROMPTS: Record<
     exit: "Ask something else",
     disclaimer:
       "An estimate built from the hours you gave. The real figure moves with what the work actually involves.",
+    offline:
+      "This view is not connected to the server that keeps readings, so I cannot send you a copy. The arithmetic is the same one. Write to hello@axisone.jp if you would like it on paper.",
   },
 };
 

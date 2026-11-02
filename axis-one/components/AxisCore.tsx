@@ -19,6 +19,7 @@ import {
   PROMPTS,
   RECOMMENDED,
   TASKS,
+  readDiagnosis,
   tasksFor,
   type Answers,
   type HeadcountId,
@@ -31,8 +32,8 @@ import {
  * AXIS CORE — the assistant.
  *
  * Two modes in one panel. Free chat answers questions; the guided diagnosis
- * runs the five-question version of the paid product, which is the reason the
- * panel exists at all — it demonstrates the offer instead of describing it,
+ * runs the five-question reading, which is the reason the
+ * panel exists at all — it demonstrates the work instead of describing it,
  * and gives the visitor a reason to leave an address.
  *
  * Chat answers come from `/api/axis-core` when a model is connected and from
@@ -231,6 +232,34 @@ export default function AxisCore() {
     setFlow({ step: "off" });
   }, []);
 
+  /**
+   * Show a reading. `recorded` says whether it came back from the server: when
+   * it did not, nothing was stored and nothing can be sent, so the panel says
+   * so instead of asking for an email it cannot honour.
+   */
+  const present = useCallback(
+    (reading: Reading, recorded: boolean) => {
+      const breakdown = reading.lines
+        .map((line) => `・${line.label} … ${line.savedLow}〜${line.savedHigh}h`)
+        .join("\n");
+      const next = RECOMMENDED[reading.recommendation][lang];
+
+      say(
+        `**${reading.headline}**\n\n${breakdown}\n\n${reading.summary}\n\n` +
+          `**${next.name}**\n${next.why}\n\n${prompts.disclaimer}`,
+      );
+
+      if (!recorded) {
+        say(prompts.offline);
+        setFlow({ step: "off" });
+        return;
+      }
+      say(`${prompts.emailAsk}\n${prompts.privacy}`);
+      setFlow({ step: "email" });
+    },
+    [lang, prompts, say],
+  );
+
   const submitDiagnosis = useCallback(
     async (email?: string) => {
       const { industry, headcount, maturity, hours } = answers.current;
@@ -256,26 +285,21 @@ export default function AxisCore() {
           return;
         }
 
-        const reading = payload.reading;
-        const breakdown = reading.lines
-          .map((line) => `・${line.label} … ${line.savedLow}〜${line.savedHigh}h`)
-          .join("\n");
-        const next = RECOMMENDED[reading.recommendation][lang];
-
-        say(
-          `**${reading.headline}**\n\n${breakdown}\n\n${reading.summary}\n\n` +
-            `**${next.name}**\n${next.why}\n\n${prompts.disclaimer}`,
-        );
-        say(`${prompts.emailAsk}\n${prompts.privacy}`);
-        setFlow({ step: "email" });
+        present(payload.reading, true);
       } catch {
-        say(copy.error);
-        setFlow({ step: "off" });
+        // No server to score or keep it — the arithmetic is pure, so run it
+        // here and say plainly that nothing was recorded.
+        if (email) {
+          say(copy.error);
+          setFlow({ step: "off" });
+        } else {
+          present(readDiagnosis({ industry, headcount, maturity, hours }, lang), false);
+        }
       } finally {
         setPending(false);
       }
     },
-    [copy.error, lang, prompts, say],
+    [copy.error, lang, present, prompts, say],
   );
 
   /** One tap answers the current question and moves to the next. */
